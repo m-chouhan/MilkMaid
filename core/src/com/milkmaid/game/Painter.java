@@ -50,7 +50,7 @@ public class Painter implements Screen {
 
         Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-//        TODO Paint Graph
+
         debugRenderer.begin(ShapeRenderer.ShapeType.Filled);
         debugRenderer.setColor(new Color(1, 0, 0, 1));
 
@@ -58,11 +58,6 @@ public class Painter implements Screen {
 
             debugRenderer.circle(VQueue.getVertex(i).x,VQueue.getVertex(i).y,node_size);
         }
-        /*
-        for(Vector2 ver:VertexArray) {
-
-            debugRenderer.circle(ver.x,ver.y,node_size);
-        }/**/
         debugRenderer.end();
 
         debugRenderer.begin(ShapeRenderer.ShapeType.Line);
@@ -80,13 +75,6 @@ public class Painter implements Screen {
 
         }
 
-        /*for(int i= 0;i<Graph.length;++i) {
-            for(int j = 0;j<i;++j) {
-                if( Graph[i][j] == 1 ) {
-                    //debugRenderer.line(VertexArray[i],VertexArray[j]);
-                }
-            }
-        }*/
         debugRenderer.end();
     }
 

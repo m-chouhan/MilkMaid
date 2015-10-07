@@ -59,27 +59,6 @@ public class World {
 
             VQueue.Push(new Vertex(x, r.nextInt(Height / NODE_SIZE) * (NODE_SIZE)));
         }
-            /*
-            if( i < 7) {
-                int rnum = r.nextInt(i);
-                Graph[rnum][i] = Graph[i][rnum] = 1;
-                rnum = r.nextInt(i);
-                Graph[rnum][i] = Graph[i][rnum] = 1;
-            }
-            else {
-                int a = i - (r.nextInt(6) + 1),
-                        b = i - (r.nextInt(3));
-                Graph[i][a] = Graph[a][i] =
-                        Graph[i][b] = Graph[b][i] = 1;
-            }
-        }
-        /*
-        for( int i = 0;i<MAX_ELEMENTS;++i) {
-            for(int j = 0;j<i;++j) {
-                double prob = 50f/VertexArray[i].dst(VertexArray[j]);
-                Graph[i][j] = generateProbability(prob);
-            }
-        }*/
     }
 
     private int generateProbability(double val) {
@@ -115,43 +94,6 @@ public class World {
             vbottom.y = r.nextInt(Height/NODE_SIZE)*(NODE_SIZE);
             VQueue.Push(vbottom);
         }
-        /*
-        if( VertexArray[BottomIndex].x < camera_bottom) {
-
-            Random r = new Random();
-            int window = Max_Width/MAX_ELEMENTS+50;
-            int topmostIndex = BottomIndex - 1;
-
-            if( BottomIndex == 0 ) topmostIndex = MAX_ELEMENTS -1;
-
-            VertexArray[BottomIndex].x = VertexArray[topmostIndex].x + (r.nextInt(window/NODE_SIZE)+1)*(NODE_SIZE+10);
-            VertexArray[BottomIndex].y = r.nextInt(Height/NODE_SIZE)*(NODE_SIZE);
-
-            for(int i = 0;i<MAX_ELEMENTS;++i)
-                Graph[BottomIndex][i] = Graph[i][BottomIndex] = 0;
-
-            //Now bottom most element is at top so generate new edges in invisible top area
-
-            int a = BottomIndex -(r.nextInt(6)+1),
-                    b = BottomIndex - (r.nextInt(3));
-            if( a < 0) a += MAX_ELEMENTS;
-            if( b < 0) b += MAX_ELEMENTS;
-            Graph[BottomIndex][a] = Graph[a][BottomIndex] =
-                    Graph[BottomIndex][b] = Graph[b][BottomIndex] = 1;
-
-            /*while( VertexArray[topmostIndex].x > camera_top) {
-
-                double prob = 20f/VertexArray[BottomIndex].dst(VertexArray[topmostIndex]);
-                Graph[BottomIndex][topmostIndex] = Graph[topmostIndex][BottomIndex]
-                        = generateProbability(prob);
-
-                if(topmostIndex == 0 ) topmostIndex = MAX_ELEMENTS -1;
-                else topmostIndex--;
-            }*/
-            //BottomIndex = (++BottomIndex) % MAX_ELEMENTS;
-        //}
-        //Gdx.app.log(TAG, "LowerBound[" + (camera.position.x - camera.viewportWidth / 2));
-        //Gdx.app.log(TAG, "UpperBound[" + (camera.position.x + camera.viewportWidth / 2));
 
     }
 
