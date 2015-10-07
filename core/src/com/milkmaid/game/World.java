@@ -6,7 +6,6 @@ package com.milkmaid.game;
 
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.math.Vector2;
 
 import java.util.Random;
 
@@ -15,8 +14,6 @@ public class World {
 
     private final String TAG = "WORLD";
 
-
-    private Vector2 VertexArray[];
     private VertexQueue VQueue;
 
     private int BottomIndex = 0; //For implementing circular x- sorted array
@@ -35,7 +32,6 @@ public class World {
 
         ScreenWidth = width; ScreenHeight = height;
 
-        VertexArray = new Vector2[MAX_ELEMENTS];
         VQueue = new VertexQueue(MAX_ELEMENTS);
 
         Graph = new int[MAX_ELEMENTS][MAX_ELEMENTS];
@@ -55,15 +51,15 @@ public class World {
         Random r = new Random();
         int window = Max_Width/MAX_ELEMENTS+100;
         int x = 100;
-        VertexArray[0] = new Vector2(x,Height/2);
         VQueue.Push(new Vertex(x,Height/2));
 
         for(int i = 1 ;i<MAX_ELEMENTS;++i) {
 
-            x += (r.nextInt(window/NODE_SIZE)+1)*(NODE_SIZE+10);
-            VertexArray[i] = new Vector2(x,r.nextInt(Height/NODE_SIZE)*(NODE_SIZE));
-            VQueue.Push(new Vertex((int)VertexArray[i].x,(int)VertexArray[i].y));
+            x += (r.nextInt(window / NODE_SIZE) + 1) * (NODE_SIZE + 10);
 
+            VQueue.Push(new Vertex(x, r.nextInt(Height / NODE_SIZE) * (NODE_SIZE)));
+        }
+            /*
             if( i < 7) {
                 int rnum = r.nextInt(i);
                 Graph[rnum][i] = Graph[i][rnum] = 1;
@@ -93,7 +89,7 @@ public class World {
     }
 
     public VertexQueue getVQueue() {return VQueue; }
-    public Vector2[] getVertexArray() { return VertexArray; }
+
     public int[][] getGraph() { return Graph; }
     public Screen getPainterScreen() { return myPainter; }
     public OrthographicCamera getCamera() { return camera; }

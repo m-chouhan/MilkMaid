@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Vector2;
 
 
 /**
@@ -16,7 +15,7 @@ public class Painter implements Screen {
 
     private final String TAG = "PAINTER";
     private final VertexQueue VQueue;
-    private Vector2 VertexArray[];
+
     private int Graph[][];
     private World myWorld;
     private OrthographicCamera camera;
@@ -27,7 +26,6 @@ public class Painter implements Screen {
 
         myWorld = w;
         VQueue = w.getVQueue();
-        VertexArray = w.getVertexArray();
         Graph = w.getGraph();
         Width = myWorld.ScreenWidth;
         Height = myWorld.ScreenHeight;
