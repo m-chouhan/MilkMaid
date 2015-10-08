@@ -71,29 +71,39 @@ public class World {
     public int getNodeSize() { return NODE_SIZE/5;}
     public Vertex getLastTouched() { return LastTouched; }
 
-    public void VertexTouched(Vertex vertex) {
+    public void VertexUnTouched(Vertex vertex) {
 
-        if(LastTouched == null) {
-            if(vertex == VQueue.getVertex(0)) {
-                LastTouched = vertex;
-                LastTouched.changeState(Vertex.Status.Touched);
-                Game_Started = true;
-            }
+    }
+
+    public void VertexTouched(Vertex vertex) {
+        if( LastTouched == null) {
+          if( vertex == VQueue.getVertex(0)) {
+              LastTouched = vertex;
+              LastTouched.changeState(Vertex.Status.Touched);
+              for(HalfEdge h:LastTouched.getEdgeList())
+                  h.getDst().changeState(Vertex.Status.Reachable);
+              Game_Started = true;
+
+          }
         }
         else {
-            for (HalfEdge he : LastTouched.getEdgeList())
-                if (he.getDst() == vertex) {
-                    LastTouched = vertex;
-                    LastTouched.changeState(Vertex.Status.Touched);
-                    return;
-                }
+
+            for( HalfEdge h:LastTouched.getEdgeList())
+                h.getDst().changeState(Vertex.Status.UnReachable);
+
+            LastTouched = vertex;
+            LastTouched.changeState(Vertex.Status.Touched);
+
+            for( HalfEdge h:LastTouched.getEdgeList())
+                h.getDst().changeState(Vertex.Status.Reachable);
+
         }
     }
 
     public void update() {
 
         if(Game_Started) {
-            camera.translate(1, 0);
+            camera.translate(0.5f, 0);
             camera.update();
         }
 

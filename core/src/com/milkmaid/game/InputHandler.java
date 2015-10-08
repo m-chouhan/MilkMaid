@@ -50,7 +50,7 @@ public class InputHandler implements InputProcessor {
         int index = VQueue.SearchUpperBound((int) touchPos.x - TOUCH_DIM - Node_Size);
             Vertex v = VQueue.getVertex(++index);
             do {
-                //TODO: Notify world class
+
                 if ( v.dst(touchPos) < Node_Size + TOUCH_DIM ) {
                     Gdx.app.log(TAG, "Collision at" + index + "[" + v.x + "|" + v.y + "]");
                     myWorld.VertexTouched(v);
@@ -64,9 +64,21 @@ public class InputHandler implements InputProcessor {
     @Override
     public boolean touchUp(int x, int y, int pointer, int button) {
 
-        Vector3 v = camera.unproject(new Vector3(x,y,0));
-        Gdx.app.log(TAG,"TouchUP");
+        Vector3 touch3D = camera.unproject(new Vector3(x,y,0));
+        Vector2 touchPos = new Vector2(touch3D.x,touch3D.y);
 
+        Gdx.app.log(TAG, "TouchDown " + touchPos.x + "|" + touchPos.y);
+        int index = VQueue.SearchUpperBound((int) touchPos.x - TOUCH_DIM - Node_Size);
+        Vertex v = VQueue.getVertex(++index);
+        do {
+
+            if ( v.dst(touchPos) < Node_Size + TOUCH_DIM ) {
+                Gdx.app.log(TAG, "Collision at" + index + "[" + v.x + "|" + v.y + "]");
+                myWorld.VertexUnTouched(v);
+                return true;
+            }
+            v = VQueue.getVertex(++index);
+        }while (v.x < touchPos.x + 10);
         return false;
     }
 

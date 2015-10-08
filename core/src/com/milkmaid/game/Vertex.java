@@ -9,7 +9,7 @@ import java.util.ArrayList;
  */
 public class Vertex extends Vector2 {
 
-    enum Status { Visible,Touched,Dead,Invisible };
+    enum Status { Visible,Touched,Dead,Invisible,Reachable,UnReachable };
     private static boolean RESET = false;
 
     private Status currentState = Status.Visible;
@@ -26,23 +26,30 @@ public class Vertex extends Vector2 {
     public static void Reset() { RESET = !RESET; }
     public Status getCurrentState() { return currentState; }
     public void changeState(Status s) {
-        currentState = s;
+
         //TODO: add state transitions
-        switch (currentState) {
+        switch (s) {
+
             case Touched:
                     break;
             case Dead:
-
                     for(HalfEdge he:EdgeList) {
                         he.getDst().Disconnect(this);
                     }
                     EdgeList.clear();
                     break;
+
             case Invisible:
                     break;
             case Visible:
                     break;
+
+            case Reachable:
+            case UnReachable:
+                    if( currentState == Status.Touched) return;
+                    break;
         }
+        currentState = s;
     }
     public ArrayList<HalfEdge> getEdgeList() { return EdgeList; }
 

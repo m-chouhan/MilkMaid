@@ -72,15 +72,10 @@ public class Painter implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         batch.begin();
-        batch.draw(Regions[0],0, 0);
-        batch.draw(Regions[1],100,100);
-        batch.draw(Regions[2],200,200);
-        batch.draw(Regions[3], 300, 300);
-
-        batch.end();
-
-        debugRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        debugRenderer.setColor(new Color(1, 0, 0, 1));
+//        batch.draw(Regions[0],0, 0);
+//        batch.draw(Regions[1],100,100);
+//        batch.draw(Regions[2],200,200);
+//        batch.draw(Regions[3], 300, 300);
 
         for(int i = 0;i<VQueue.getSize();++i) {
 
@@ -89,19 +84,27 @@ public class Painter implements Screen {
 
             if(vertex.getCurrentState() == Vertex.Status.Invisible) vertex.changeState(Vertex.Status.Visible);
             switch (vertex.getCurrentState()) {
+
+                case UnReachable:
                 case Visible:
-                        debugRenderer.setColor(new Color(1, 0, 0, 1));
-                        debugRenderer.circle(vertex.x, vertex.y, node_size);
+                        batch.draw(Regions[2], vertex.x-Regions[2].getRegionWidth()/2,
+                                vertex.y-Regions[2].getRegionHeight()/2);
                         break;
                 case Touched:
-                        debugRenderer.setColor(new Color(1f, 0.5f, 0.5f, 0.5f));
-                        debugRenderer.circle(vertex.x, vertex.y, node_size);
+                        batch.draw(Regions[0], vertex.x - Regions[0].getRegionWidth()/2,
+                            vertex.y-Regions[0].getRegionHeight()/2);
                         break;
+                case Reachable:
+                        batch.draw(Regions[1], vertex.x - Regions[1].getRegionWidth()/2,
+                            vertex.y-Regions[1].getRegionHeight()/2);
+                    break;
                 case Dead:
                         break;
+
             }
         }
-        debugRenderer.end();
+
+        batch.end();
 
         debugRenderer.begin(ShapeRenderer.ShapeType.Line);
         debugRenderer.setColor(new Color(1, 0, 0, 1));
