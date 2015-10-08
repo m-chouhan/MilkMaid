@@ -76,6 +76,7 @@ public class World {
     }
 
     public void VertexTouched(Vertex vertex) {
+
         if( LastTouched == null) {
           if( vertex == VQueue.getVertex(0)) {
               LastTouched = vertex;
@@ -85,18 +86,22 @@ public class World {
               Game_Started = true;
 
           }
+          return;
         }
-        else {
 
-            for( HalfEdge h:LastTouched.getEdgeList())
-                h.getDst().changeState(Vertex.Status.UnReachable);
+        for( HalfEdge he:LastTouched.getEdgeList() ) {
 
-            LastTouched = vertex;
-            LastTouched.changeState(Vertex.Status.Touched);
+            if(he.getDst() == vertex) {
 
-            for( HalfEdge h:LastTouched.getEdgeList())
-                h.getDst().changeState(Vertex.Status.Reachable);
+                for (HalfEdge h : LastTouched.getEdgeList())
+                    h.getDst().changeState(Vertex.Status.UnReachable);
 
+                LastTouched = vertex;
+                LastTouched.changeState(Vertex.Status.Touched);
+
+                for (HalfEdge h : LastTouched.getEdgeList())
+                    h.getDst().changeState(Vertex.Status.Reachable);
+            }
         }
     }
 
