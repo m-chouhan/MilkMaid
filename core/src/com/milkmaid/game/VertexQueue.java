@@ -3,6 +3,8 @@ package com.milkmaid.game;
 /**
  * Created by maximus_prime on 3/10/15.
  */
+
+import java.util.EmptyStackException;
 import java.util.Random;
 
 public class VertexQueue {
@@ -22,13 +24,31 @@ public class VertexQueue {
     public int getSize() { return size; }
 
     public Vertex getVertex(int i) {
-        if( i < size) return Array[ (bottom + i) % max_size ];
-        return null;
+        if( i < size && i>= 0) return Array[ (bottom + i) % max_size ];
+        throw new ArrayIndexOutOfBoundsException();
     }
 
-    //TODO: Implement binary Search
-    public int Search(int x) {
-        return 0;
+
+    //search for max value < x and return the index for iterating over it
+    public int SearchUpperBound(int x) {
+
+        int step_size = (int)Math.ceil(size/2f);
+        int i = step_size;
+
+        while (i >= 0 && i < size && step_size > 0) {
+
+            Vertex v = getVertex(i);
+            step_size = (int) Math.ceil(step_size /2f);
+
+            if (v.x < x) {
+                Vertex v2 = getVertex(i + 1);
+                if (v2.x >= x) return i;
+                else i += step_size;
+
+            }
+            else i -= step_size;
+        }
+        return -1;
     }
     public void Push(Vertex v) {
 
@@ -38,8 +58,6 @@ public class VertexQueue {
         }
         else if( size < max_size ) {
 
-            //TODO: generate random edges here
-            //TODO: Testing code
             int a = 0,b = 0;
 
             if( size < 7) {
@@ -57,6 +75,7 @@ public class VertexQueue {
             Array[(bottom + size) % max_size] = v;
             size++;
         }
+        v.changeState(Vertex.Status.Invisible);
     }
 
     public Vertex Pop() {
@@ -69,7 +88,7 @@ public class VertexQueue {
             size--;
             return v;
         }
-        return null;
+        throw new EmptyStackException();
     }
 
     public int getLargestIndex() { return (bottom+size-1)%max_size; }

@@ -3,6 +3,7 @@ package com.milkmaid.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 /**
@@ -14,10 +15,14 @@ public class InputHandler implements InputProcessor {
     private final String TAG = "INPUTPROCESSOR";
     private OrthographicCamera camera;
     private World myWorld;
+    private VertexQueue VQueue;
+    private final int Node_Size,TOUCH_DIM = 10;
 
     public InputHandler(World world) {
         myWorld = world;
         camera = world.getCamera();
+        VQueue = world.getVQueue();
+        Node_Size = world.getNodeSize();
     }
 
     @Override
@@ -38,10 +43,18 @@ public class InputHandler implements InputProcessor {
     @Override
     public boolean touchDown(int x, int y, int pointer, int button) {
 
-        Vector3 v = camera.unproject(new Vector3(x,y,0));
+        Vector3 touch3D = camera.unproject(new Vector3(x,y,0));
+        Vector2 touchPos = new Vector2(touch3D.x,touch3D.y);
 
-        Gdx.app.log(TAG,"TouchDown "+v.x+"|"+v.y);
-        return false;
+        Gdx.app.log(TAG, "TouchDown " + touchPos.x + "|" + touchPos.y);
+        int index = VQueue.SearchUpperBound((int) touchPos.x - TOUCH_DIM - Node_Size);
+            Vertex v = VQueue.getVertex(++index);
+            do {
+                if ( v.dst(touchPos) < Node_Size + TOUCH_DIM )
+                    Gdx.app.log(TAG, "Collision at" + index + "["+v.x + "|" + v.y + "]");
+                v = VQueue.getVertex(++index);
+            }while (v.x < touchPos.x + 10);
+        return true;
     }
 
     @Override

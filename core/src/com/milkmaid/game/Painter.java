@@ -11,12 +11,12 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 /**
  * Created by maximus_prime on 27/9/15.
  */
+
 public class Painter implements Screen {
 
     private final String TAG = "PAINTER";
     private final VertexQueue VQueue;
 
-    private int Graph[][];
     private World myWorld;
     private OrthographicCamera camera;
     private ShapeRenderer debugRenderer = new ShapeRenderer();
@@ -26,11 +26,10 @@ public class Painter implements Screen {
 
         myWorld = w;
         VQueue = w.getVQueue();
-        Graph = w.getGraph();
         Width = myWorld.ScreenWidth;
         Height = myWorld.ScreenHeight;
         camera = myWorld.getCamera();
-        node_size = myWorld.NODE_SIZE/5;
+        node_size = myWorld.getNodeSize();
 
     }
     @Override
@@ -56,7 +55,11 @@ public class Painter implements Screen {
 
         for(int i = 0;i<VQueue.getSize();++i) {
 
-            debugRenderer.circle(VQueue.getVertex(i).x,VQueue.getVertex(i).y,node_size);
+            Vertex vertex = VQueue.getVertex(i);
+            if(vertex.x > camera_top ) break;
+
+            vertex.changeState(Vertex.Status.Visible);
+            debugRenderer.circle(vertex.x, vertex.y, node_size);
         }
         debugRenderer.end();
 
@@ -65,14 +68,13 @@ public class Painter implements Screen {
         for(int i = 0;i<VQueue.getSize();++i) {
             Vertex vertex = VQueue.getVertex(i);
 
-            if(vertex.x > camera_top) break;
+            if(vertex.x > camera_top) break;//since vertex is not visible
 
             for(HalfEdge he:vertex.getEdgeList()) {
 
                 if(he.getDst().IsExplored() == false) debugRenderer.line(vertex,he.getDst());
             }
             vertex.MarkExplored();
-
         }
 
         debugRenderer.end();

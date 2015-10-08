@@ -16,10 +16,7 @@ public class World {
 
     private VertexQueue VQueue;
 
-    private int BottomIndex = 0; //For implementing circular x- sorted array
-
     private final int MAX_ELEMENTS = 25;
-    private int Graph[][];
     private Painter myPainter;
 
     public final int Height = 480,Max_Width = 1600; //Height of our world
@@ -33,8 +30,6 @@ public class World {
         ScreenWidth = width; ScreenHeight = height;
 
         VQueue = new VertexQueue(MAX_ELEMENTS);
-
-        Graph = new int[MAX_ELEMENTS][MAX_ELEMENTS];
 
         camera = new OrthographicCamera(ScreenWidth,ScreenHeight); //viewport dimensions
         camera.position.set(camera.viewportWidth / 2f, Height / 2f, 0);
@@ -69,14 +64,13 @@ public class World {
 
     public VertexQueue getVQueue() {return VQueue; }
 
-    public int[][] getGraph() { return Graph; }
     public Screen getPainterScreen() { return myPainter; }
     public OrthographicCamera getCamera() { return camera; }
-    public int getBottom() { return BottomIndex; }
+    public int getNodeSize() { return NODE_SIZE/5;}
 
     public void update() {
 
-        camera.translate(2, 0);
+        camera.translate(1, 0);
         camera.update();
 
         int camera_bottom = (int) (camera.position.x - camera.viewportWidth/2);
