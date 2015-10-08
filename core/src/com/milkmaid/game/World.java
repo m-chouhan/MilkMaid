@@ -18,12 +18,14 @@ public class World {
 
     private final int MAX_ELEMENTS = 25;
     private Painter myPainter;
+    private boolean Game_Started ;
 
     public final int Height = 480,Max_Width = 1600; //Height of our world
     public final int ScreenWidth,ScreenHeight;
     public final int NODE_SIZE = 100;
 
     private OrthographicCamera camera;
+    private Vertex LastTouched = null;
 
     public World(int width,int height) {
 
@@ -38,7 +40,7 @@ public class World {
 
         myPainter = new Painter(this);
         InflateWorld();
-
+        Game_Started = false;
     }
 
     private void InflateWorld() {
@@ -46,7 +48,7 @@ public class World {
         Random r = new Random();
         int window = Max_Width/MAX_ELEMENTS+100;
         int x = 100;
-        VQueue.Push(new Vertex(x,Height/2));
+        VQueue.Push(new Vertex(x, Height / 2));
 
         for(int i = 1 ;i<MAX_ELEMENTS;++i) {
 
@@ -67,11 +69,33 @@ public class World {
     public Screen getPainterScreen() { return myPainter; }
     public OrthographicCamera getCamera() { return camera; }
     public int getNodeSize() { return NODE_SIZE/5;}
+    public Vertex getLastTouched() { return LastTouched; }
+
+    public void VertexTouched(Vertex vertex) {
+
+        if(LastTouched == null) {
+            if(vertex == VQueue.getVertex(0)) {
+                LastTouched = vertex;
+                LastTouched.changeState(Vertex.Status.Touched);
+                Game_Started = true;
+            }
+        }
+        else {
+            for (HalfEdge he : LastTouched.getEdgeList())
+                if (he.getDst() == vertex) {
+                    LastTouched = vertex;
+                    LastTouched.changeState(Vertex.Status.Touched);
+                    return;
+                }
+        }
+    }
 
     public void update() {
 
-        camera.translate(1, 0);
-        camera.update();
+        if(Game_Started) {
+            camera.translate(1, 0);
+            camera.update();
+        }
 
         int camera_bottom = (int) (camera.position.x - camera.viewportWidth/2);
         int camera_top = (int) (camera.position.x + camera.viewportWidth/2);
