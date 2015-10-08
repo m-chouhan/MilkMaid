@@ -34,6 +34,7 @@ public class Vertex extends Vector2 {
                     break;
             case Dead:
                     for(HalfEdge he:EdgeList) {
+                        he.getDst().changeState(Status.UnReachable);
                         he.getDst().Disconnect(this);
                     }
                     EdgeList.clear();

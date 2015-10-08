@@ -65,7 +65,7 @@ public class VertexQueue {
                 b = R.nextInt(size);
             }
             else {
-                a = size - (R.nextInt(6) + 1);
+                a = size - (R.nextInt(3) + 1);
                 b = size - (R.nextInt(3) + 1);
 
             }
