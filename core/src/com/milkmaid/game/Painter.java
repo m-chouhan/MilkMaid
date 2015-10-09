@@ -14,6 +14,7 @@ import com.badlogic.gdx.math.Rectangle;
 
 /**
  * Created by maximus_prime on 27/9/15.
+ * Painter class handles all the rendering
  */
 
 public class Painter implements Screen {
@@ -24,10 +25,9 @@ public class Painter implements Screen {
     private World myWorld;
     private OrthographicCamera camera;
     private ShapeRenderer debugRenderer = new ShapeRenderer();
-    private int Width,Height,node_size;
-    private Texture MySprites,background ;
-    private TextureRegion Regions[],Backgrounds[][];
-    private Sprite BackgroundSprites[];
+    private final int Width,Height;
+    private TextureRegion Regions[][];
+    private Sprite BackgroundSprites[] = new Sprite[4];
 
     private SpriteBatch batch;
 
@@ -38,22 +38,19 @@ public class Painter implements Screen {
         Width = myWorld.ScreenWidth;
         Height = myWorld.ScreenHeight;
         camera = myWorld.getCamera();
-        node_size = myWorld.getNodeSize();
 
-        BackgroundSprites = new Sprite[4];
+        Texture SpriteSheet = new Texture(Gdx.files.internal("short_sprites.png"));
+        Texture background = new Texture(Gdx.files.internal("backgroundtexture2.png"));
+        TextureRegion Backgrounds[][] = TextureRegion.split(background,301,200);
 
-        MySprites = new Texture(Gdx.files.internal("short_sprites.png"));
-        background = new Texture(Gdx.files.internal("backgroundtexture2.png"));
-        Backgrounds = TextureRegion.split(background,301,200);
-        Regions = new TextureRegion[4];
-
-        int width = MySprites.getWidth()/2,height = MySprites.getHeight()/2;
+        int width = SpriteSheet.getWidth()/2,height = SpriteSheet.getHeight()/2;
+        Regions = TextureRegion.split(SpriteSheet,width,height);
 
 
-        Regions[0] = new TextureRegion(MySprites,0,0,width,height);
-        Regions[1] = new TextureRegion(MySprites,width,0,width,height);
-        Regions[2] = new TextureRegion(MySprites,0,height,width,height);
-        Regions[3] = new TextureRegion(MySprites,width,height,width,height);
+//        Regions[0] = new TextureRegion(SpriteSheet,0,0,width,height);
+//        Regions[1] = new TextureRegion(SpriteSheet,width,0,width,height);
+//        Regions[2] = new TextureRegion(SpriteSheet,0,height,width,height);
+//        Regions[3] = new TextureRegion(SpriteSheet,width,height,width,height);
 
 
         BackgroundSprites[0] = new Sprite(Backgrounds[0][0]);
@@ -61,11 +58,8 @@ public class Painter implements Screen {
         BackgroundSprites[2] = new Sprite(Backgrounds[1][0]);
         BackgroundSprites[3] = new Sprite(Backgrounds[1][1]);
 
-//        BackgroundSprites[0].setScale(2);
-//        BackgroundSprites[0].setPosition(0,200);
         int x = 0;
         for(Sprite s:BackgroundSprites) {
-            //s.setRotation(90);
             s.setScale(2);
             s.setPosition(x, 250);
             Rectangle r = s.getBoundingRectangle();
@@ -105,9 +99,9 @@ public class Painter implements Screen {
         myWorld.update();
         updateBackground();
 
-        Vertex.Reset();
+        Vertex.Reset();//reset the Isexplored boolean value
 
-        int camera_top = (int) (camera.position.x + camera.viewportWidth/2);
+        int camera_top = (int) (camera.position.x + camera.viewportWidth/2); //for optimization
 
         debugRenderer.setProjectionMatrix(camera.combined);//for working in camera coordinates
         batch.setProjectionMatrix(camera.combined);
@@ -130,16 +124,16 @@ public class Painter implements Screen {
 
                 case UnReachable:
                 case Visible:
-                        batch.draw(Regions[2], vertex.x-Regions[2].getRegionWidth()/2,
-                                vertex.y-Regions[2].getRegionHeight()/2);
+                        batch.draw(Regions[1][0], vertex.x-Regions[1][0].getRegionWidth()/2,
+                                vertex.y-Regions[1][0].getRegionHeight()/2);
                         break;
                 case Touched:
-                        batch.draw(Regions[0], vertex.x - Regions[0].getRegionWidth()/2,
-                            vertex.y-Regions[0].getRegionHeight()/2);
+                        batch.draw(Regions[0][0], vertex.x - Regions[0][0].getRegionWidth()/2,
+                            vertex.y-Regions[0][0].getRegionHeight()/2);
                         break;
                 case Reachable:
-                        batch.draw(Regions[1], vertex.x - Regions[1].getRegionWidth()/2,
-                            vertex.y-Regions[1].getRegionHeight()/2);
+                        batch.draw(Regions[0][1], vertex.x - Regions[0][1].getRegionWidth()/2,
+                            vertex.y-Regions[0][1].getRegionHeight()/2);
                     break;
                 case Dead:
                         break;
