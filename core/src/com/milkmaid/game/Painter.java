@@ -6,9 +6,11 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
 
 /**
  * Created by maximus_prime on 27/9/15.
@@ -24,7 +26,8 @@ public class Painter implements Screen {
     private ShapeRenderer debugRenderer = new ShapeRenderer();
     private int Width,Height,node_size;
     private Texture MySprites,background ;
-    private TextureRegion Regions[],BackgroundRegion;
+    private TextureRegion Regions[],Backgrounds[][];
+    private Sprite BackgroundSprites[];
 
     private SpriteBatch batch;
 
@@ -37,9 +40,11 @@ public class Painter implements Screen {
         camera = myWorld.getCamera();
         node_size = myWorld.getNodeSize();
 
+        BackgroundSprites = new Sprite[4];
+
         MySprites = new Texture(Gdx.files.internal("short_sprites.png"));
-        background = new Texture(Gdx.files.internal("backgroundtexture.png"));
-        BackgroundRegion = new TextureRegion(background,0,0,background.getWidth(),background.getHeight());
+        background = new Texture(Gdx.files.internal("backgroundtexture2.png"));
+        Backgrounds = TextureRegion.split(background,301,200);
         Regions = new TextureRegion[4];
 
         int width = MySprites.getWidth()/2,height = MySprites.getHeight()/2;
@@ -50,6 +55,27 @@ public class Painter implements Screen {
         Regions[2] = new TextureRegion(MySprites,0,height,width,height);
         Regions[3] = new TextureRegion(MySprites,width,height,width,height);
 
+
+        BackgroundSprites[0] = new Sprite(Backgrounds[0][0]);
+        BackgroundSprites[1] = new Sprite(Backgrounds[0][1]);
+        BackgroundSprites[2] = new Sprite(Backgrounds[1][0]);
+        BackgroundSprites[3] = new Sprite(Backgrounds[1][1]);
+
+//        BackgroundSprites[0].setScale(2);
+//        BackgroundSprites[0].setPosition(0,200);
+        int x = 0;
+        for(Sprite s:BackgroundSprites) {
+            //s.setRotation(90);
+            s.setScale(2);
+            s.setPosition(x, 250);
+            Rectangle r = s.getBoundingRectangle();
+            x += r.getWidth();
+            Gdx.app.log(TAG, "RegionInfo"+ r.getX() +"|" + r.getY() +"|" +
+                        r.getWidth() +"|" + r.getHeight());
+            Gdx.app.log(TAG, "SpriteInfo"+ s.getX() +"|" + s.getY() +"|" +
+                    s.getWidth() +"|" + s.getHeight());
+        }
+
         batch = new SpriteBatch();
 
     }
@@ -58,10 +84,27 @@ public class Painter implements Screen {
 
     }
 
+    public void updateBackground() {
+
+        int camera_bottom = (int) (camera.position.x - camera.viewportWidth/2);
+
+        for(Sprite s : BackgroundSprites) {
+
+            Rectangle r = s.getBoundingRectangle();
+            int rtop = (int) (r.getX()+r.getWidth());
+            if(rtop < camera_bottom) {
+                s.setPosition(s.getX()+r.getWidth()*4,250);
+                break;
+            }
+        }
+    }
+
     @Override
     public void render(float v) {
 
         myWorld.update();
+        updateBackground();
+
         Vertex.Reset();
 
         int camera_top = (int) (camera.position.x + camera.viewportWidth/2);
@@ -71,13 +114,11 @@ public class Painter implements Screen {
 
         Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        Gdx.gl.glLineWidth(7);
+        Gdx.gl.glLineWidth(5);
 
         batch.begin();
 
-        batch.draw(BackgroundRegion, 600, 0, BackgroundRegion.getRegionWidth()/2,
-                BackgroundRegion.getRegionHeight()/2,BackgroundRegion.getRegionWidth(),
-                BackgroundRegion.getRegionHeight(),2,5,90);
+        for(Sprite s: BackgroundSprites) s.draw(batch);
 
         for(int i = 0;i<VQueue.getSize();++i) {
 
@@ -111,6 +152,7 @@ public class Painter implements Screen {
 
         debugRenderer.begin(ShapeRenderer.ShapeType.Line);
         debugRenderer.setColor(new Color(1, 1, 1, 1));
+        Rectangle r = BackgroundSprites[0].getBoundingRectangle();
         for(int i = 0;i<VQueue.getSize();++i) {
             Vertex vertex = VQueue.getVertex(i);
 
