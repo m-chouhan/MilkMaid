@@ -10,7 +10,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
-
 /**
  * Created by maximus_prime on 27/9/15.
  */
@@ -24,8 +23,8 @@ public class Painter implements Screen {
     private OrthographicCamera camera;
     private ShapeRenderer debugRenderer = new ShapeRenderer();
     private int Width,Height,node_size;
-    private Texture MySprites ;
-    private TextureRegion Regions[];
+    private Texture MySprites,background ;
+    private TextureRegion Regions[],BackgroundRegion;
 
     private SpriteBatch batch;
 
@@ -38,7 +37,9 @@ public class Painter implements Screen {
         camera = myWorld.getCamera();
         node_size = myWorld.getNodeSize();
 
-        MySprites = new Texture(Gdx.files.internal("sprite_compressed.png"));
+        MySprites = new Texture(Gdx.files.internal("short_sprites.png"));
+        background = new Texture(Gdx.files.internal("backgroundtexture.png"));
+        BackgroundRegion = new TextureRegion(background,0,0,background.getWidth(),background.getHeight());
         Regions = new TextureRegion[4];
 
         int width = MySprites.getWidth()/2,height = MySprites.getHeight()/2;
@@ -70,12 +71,13 @@ public class Painter implements Screen {
 
         Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        Gdx.gl.glLineWidth(7);
 
         batch.begin();
-//        batch.draw(Regions[0],0, 0);
-//        batch.draw(Regions[1],100,100);
-//        batch.draw(Regions[2],200,200);
-//        batch.draw(Regions[3], 300, 300);
+
+        batch.draw(BackgroundRegion, 600, 0, BackgroundRegion.getRegionWidth()/2,
+                BackgroundRegion.getRegionHeight()/2,BackgroundRegion.getRegionWidth(),
+                BackgroundRegion.getRegionHeight(),2,5,90);
 
         for(int i = 0;i<VQueue.getSize();++i) {
 
@@ -106,8 +108,9 @@ public class Painter implements Screen {
 
         batch.end();
 
+
         debugRenderer.begin(ShapeRenderer.ShapeType.Line);
-        debugRenderer.setColor(new Color(1, 0, 0, 1));
+        debugRenderer.setColor(new Color(1, 1, 1, 1));
         for(int i = 0;i<VQueue.getSize();++i) {
             Vertex vertex = VQueue.getVertex(i);
 
@@ -115,12 +118,14 @@ public class Painter implements Screen {
 
             for(HalfEdge he:vertex.getEdgeList()) {
 
-                if(he.getDst().IsExplored() == false) debugRenderer.line(vertex,he.getDst());
+                if(he.getDst().IsExplored() == false || he.getDst().getCurrentState() == Vertex.Status.Invisible)
+                    debugRenderer.line(vertex,he.getDst());
             }
             vertex.MarkExplored();
         }
 
         debugRenderer.end();
+        /**/
     }
 
     @Override
