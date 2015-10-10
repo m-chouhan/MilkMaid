@@ -14,18 +14,18 @@ public class World {
 
     private final String TAG = "WORLD";
 
+    private float Speed = 1.0f;
     private VertexQueue VQueue;
-
     private final int MAX_ELEMENTS = 25;
     private Painter myPainter;
-    private boolean Game_Started ;
+    private boolean Game_Started = false;
+    private Random RandomGenerator = new Random();
+    private OrthographicCamera camera;
+    private Vertex LastTouched = null;
 
     public final int Height = 480,Max_Width = 1600; //Height of our world
     public final int ScreenWidth,ScreenHeight;
-    public final int NODE_SIZE = 100;
-
-    private OrthographicCamera camera;
-    private Vertex LastTouched = null;
+    public final int NODE_SIZE = 120;
 
     public World(int width,int height) {
 
@@ -40,21 +40,31 @@ public class World {
 
         myPainter = new Painter(this);
         InflateWorld();
-        Game_Started = false;
     }
 
     private void InflateWorld() {
 
-        Random r = new Random();
-        int window = Max_Width/MAX_ELEMENTS+100;
-        int x = 100;
-        VQueue.Push(new Vertex(x, Height / 2));
+        int window = 150;//Max_Width/MAX_ELEMENTS;
+        int x = 100,y = Height/2;
+        VQueue.Push(new Vertex(x, y));
 
         for(int i = 1 ;i<MAX_ELEMENTS;++i) {
 
-            x += (r.nextInt(window / NODE_SIZE) + 1) * (NODE_SIZE + 10);
+            x += (RandomGenerator.nextInt(window / NODE_SIZE) + 1) * (NODE_SIZE);
+            y = RandomGenerator.nextInt(Height / NODE_SIZE) * (NODE_SIZE);
+            if( i > 3) {
+                int y1 = 0,y2 = 0,y3 = 0;
+                do {
+                    y = RandomGenerator.nextInt(Height / NODE_SIZE) * (NODE_SIZE);
+                    y1 = (int) Math.abs(y - VQueue.getVertex(i - 1).y);
+                    y2 = (int) Math.abs(y - VQueue.getVertex(i - 2).y);
+                    y3 = (int) Math.abs(y - VQueue.getVertex(i - 3).y);
+                }
+                while( y1 < 10 || y2 < 10 || y3 < 10);
+            }
 
-            VQueue.Push(new Vertex(x, r.nextInt(Height / NODE_SIZE) * (NODE_SIZE)));
+
+            VQueue.Push(new Vertex(x,y ));
         }
     }
 
@@ -108,8 +118,10 @@ public class World {
     public void update() {
 
         if(Game_Started) {
-            camera.translate(0.5f, 0);
+            camera.translate(Speed, 0);
             camera.update();
+            myPainter.updateBackground(Speed/2);
+            Speed += 0.002f;
         }
 
         int camera_bottom = (int) (camera.position.x - camera.viewportWidth/2);
@@ -118,13 +130,24 @@ public class World {
         if(VQueue.getVertex(0).x <camera_bottom) {
 
             Vertex vbottom = VQueue.Pop();
-            Vertex vtop = VQueue.getVertex(VQueue.getSize()-1);
+            int last = VQueue.getSize()-1;
+            Vertex vtop = VQueue.getVertex(last);
 
-            Random r = new Random();
-            int window = Max_Width/MAX_ELEMENTS+50;
 
-            vbottom.x = vtop.x + (r.nextInt(window/NODE_SIZE)+1)*(NODE_SIZE+10);
-            vbottom.y = r.nextInt(Height/NODE_SIZE)*(NODE_SIZE);
+            int window = 150;
+
+            vbottom.x = vtop.x + (RandomGenerator.nextInt(window/NODE_SIZE)+1)*(NODE_SIZE);
+
+            int y1 = 0,y2 = 0,y3 = 0;
+            do {
+                vbottom.y = RandomGenerator.nextInt(Height / NODE_SIZE) * (NODE_SIZE);
+                y1 = (int) Math.abs(vbottom.y - VQueue.getVertex(last - 1).y);
+                y2 = (int) Math.abs(vbottom.y - VQueue.getVertex(last - 2).y);
+                y3 = (int) Math.abs(vbottom.y - VQueue.getVertex(last - 3).y);
+            }
+            while( y1 < 10 || y2 < 10 || y3 < 10);
+
+
             VQueue.Push(vbottom);
         }
 

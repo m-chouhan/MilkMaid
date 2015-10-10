@@ -46,13 +46,6 @@ public class Painter implements Screen {
         int width = SpriteSheet.getWidth()/2,height = SpriteSheet.getHeight()/2;
         Regions = TextureRegion.split(SpriteSheet,width,height);
 
-
-//        Regions[0] = new TextureRegion(SpriteSheet,0,0,width,height);
-//        Regions[1] = new TextureRegion(SpriteSheet,width,0,width,height);
-//        Regions[2] = new TextureRegion(SpriteSheet,0,height,width,height);
-//        Regions[3] = new TextureRegion(SpriteSheet,width,height,width,height);
-
-
         BackgroundSprites[0] = new Sprite(Backgrounds[0][0]);
         BackgroundSprites[1] = new Sprite(Backgrounds[0][1]);
         BackgroundSprites[2] = new Sprite(Backgrounds[1][0]);
@@ -64,10 +57,10 @@ public class Painter implements Screen {
             s.setPosition(x, 250);
             Rectangle r = s.getBoundingRectangle();
             x += r.getWidth();
-            Gdx.app.log(TAG, "RegionInfo"+ r.getX() +"|" + r.getY() +"|" +
-                        r.getWidth() +"|" + r.getHeight());
-            Gdx.app.log(TAG, "SpriteInfo"+ s.getX() +"|" + s.getY() +"|" +
-                    s.getWidth() +"|" + s.getHeight());
+//            Gdx.app.log(TAG, "RegionInfo"+ r.getX() +"|" + r.getY() +"|" +
+//                        r.getWidth() +"|" + r.getHeight());
+//            Gdx.app.log(TAG, "SpriteInfo"+ s.getX() +"|" + s.getY() +"|" +
+//                    s.getWidth() +"|" + s.getHeight());
         }
 
         batch = new SpriteBatch();
@@ -78,17 +71,18 @@ public class Painter implements Screen {
 
     }
 
-    public void updateBackground() {
+    public void updateBackground(float Velocity) {
 
         int camera_bottom = (int) (camera.position.x - camera.viewportWidth/2);
 
         for(Sprite s : BackgroundSprites) {
 
+            s.setPosition(s.getX()+Velocity,s.getY());
             Rectangle r = s.getBoundingRectangle();
             int rtop = (int) (r.getX()+r.getWidth());
             if(rtop < camera_bottom) {
                 s.setPosition(s.getX()+r.getWidth()*4,250);
-                break;
+                //break;
             }
         }
     }
@@ -97,7 +91,7 @@ public class Painter implements Screen {
     public void render(float v) {
 
         myWorld.update();
-        updateBackground();
+
 
         Vertex.Reset();//reset the Isexplored boolean value
 
@@ -112,7 +106,7 @@ public class Painter implements Screen {
 
         batch.begin();
 
-        for(Sprite s: BackgroundSprites) s.draw(batch);
+        for(Sprite s: BackgroundSprites) s.draw(batch); //render background
 
         for(int i = 0;i<VQueue.getSize();++i) {
 
@@ -154,7 +148,7 @@ public class Painter implements Screen {
 
             for(HalfEdge he:vertex.getEdgeList()) {
 
-                if(he.getDst().IsExplored() == false || he.getDst().getCurrentState() == Vertex.Status.Invisible)
+                if( !he.getDst().IsExplored() || he.getDst().getCurrentState() == Vertex.Status.Invisible)
                     debugRenderer.line(vertex,he.getDst());
             }
             vertex.MarkExplored();
