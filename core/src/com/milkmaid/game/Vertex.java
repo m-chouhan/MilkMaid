@@ -10,6 +10,8 @@ import java.util.ArrayList;
 public class Vertex extends Vector2 {
 
     enum Status { Visible,Touched,Dead,Invisible,Reachable,UnReachable };
+    enum Type {Normal,Taller,Stronger,Sharper};
+
     private static boolean RESET = false;
 
     private Status currentState = Status.Visible;
@@ -23,7 +25,7 @@ public class Vertex extends Vector2 {
         this.x = x;this.y = y;
     }
 
-    public static void Reset() { RESET = !RESET; }
+    public static void Reset() { RESET = !RESET; } //optimized reset function
     public Status getCurrentState() { return currentState; }
     public void changeState(Status s) {
 
