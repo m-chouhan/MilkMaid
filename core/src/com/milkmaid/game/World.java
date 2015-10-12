@@ -50,7 +50,7 @@ public class World {
 
         for(int i = 1 ;i<MAX_ELEMENTS;++i) {
 
-            x += (RandomGenerator.nextInt(window / NODE_SIZE) + 1) * (NODE_SIZE);
+            x += (RandomGenerator.nextInt(15)+5)*10;//(RandomGenerator.nextInt(window / NODE_SIZE) + 1) * (NODE_SIZE);
             y = RandomGenerator.nextInt(Height / NODE_SIZE) * (NODE_SIZE);
             if( i > 3) {
                 int y1 = 0,y2 = 0,y3 = 0;
@@ -87,6 +87,7 @@ public class World {
 
     public void VertexTouched(Vertex vertex) {
 
+        //TODO: Check for vertext type and set their control
         if( LastTouched == null) {
           if( vertex == VQueue.getVertex(0)) {
               LastTouched = vertex;
@@ -136,14 +137,14 @@ public class World {
 
             int window = 150;
 
-            vbottom.x = vtop.x + (RandomGenerator.nextInt(window/NODE_SIZE)+1)*(NODE_SIZE);
+            vbottom.x = vtop.x + (RandomGenerator.nextInt(15)+3)*10;//(RandomGenerator.nextInt(window/NODE_SIZE)+1)*(NODE_SIZE);
 
             int y1 = 0,y2 = 0,y3 = 0;
             do {
                 vbottom.y = RandomGenerator.nextInt(Height / NODE_SIZE) * (NODE_SIZE);
-                y1 = (int) Math.abs(vbottom.y - VQueue.getVertex(last - 1).y);
-                y2 = (int) Math.abs(vbottom.y - VQueue.getVertex(last - 2).y);
-                y3 = (int) Math.abs(vbottom.y - VQueue.getVertex(last - 3).y);
+                y1 = (int) Math.abs(vbottom.y - VQueue.getVertex(last).y);
+                y2 = (int) Math.abs(vbottom.y - VQueue.getVertex(last - 1).y);
+                y3 = (int) Math.abs(vbottom.y - VQueue.getVertex(last - 2).y);
             }
             while( y1 < 10 || y2 < 10 || y3 < 10);
 

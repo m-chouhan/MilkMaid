@@ -10,14 +10,14 @@ import java.util.ArrayList;
 public class Vertex extends Vector2 {
 
     enum Status { Visible,Touched,Dead,Invisible,Reachable,UnReachable };
-    enum Type {Normal,Taller,Stronger,Sharper};
+    enum Type {Normal,Taller,Stronger,Sharper,Bonus};
 
     private static boolean RESET = false;
 
     private Status currentState = Status.Visible;
     private ArrayList<HalfEdge> EdgeList = new ArrayList<HalfEdge>();
     private boolean explored = false;
-
+    private Type VertexType = Type.Normal;
 
     public Vertex(int x,int y) {
 
@@ -25,7 +25,11 @@ public class Vertex extends Vector2 {
         this.x = x;this.y = y;
     }
 
-    public static void Reset() { RESET = !RESET; } //optimized reset function
+    public static void Reset() { RESET = !RESET; } //optimized reset function for painting
+
+    public Type getVertexType() { return VertexType;}
+    public void setVertexType(Type t) { VertexType = t; }
+
     public Status getCurrentState() { return currentState; }
     public void changeState(Status s) {
 

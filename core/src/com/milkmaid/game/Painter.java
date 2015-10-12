@@ -133,6 +133,17 @@ public class Painter implements Screen {
                         break;
 
             }
+            switch (vertex.getVertexType()) {
+
+                case Normal: break;
+                case Sharper:
+                case Stronger:
+                        batch.draw(Regions[1][1], vertex.x - Regions[1][1].getRegionWidth()/2,
+                            vertex.y-Regions[1][1].getRegionHeight()/2);
+                        break;
+                case Taller:break;
+
+            }
         }
 
         batch.end();

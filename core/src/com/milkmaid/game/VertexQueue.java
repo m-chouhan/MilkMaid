@@ -2,6 +2,7 @@ package com.milkmaid.game;
 
 /**
  * Created by maximus_prime on 3/10/15.
+ * This is a custom Queue Class for recycling Vertices efficiently
  */
 
 import java.util.EmptyStackException;
@@ -76,6 +77,20 @@ public class VertexQueue {
             size++;
         }
         v.changeState(Vertex.Status.Invisible);
+        //TODO: Add case for superpower Taller :/
+        switch ((int)(Math.random()*30) ) {
+
+            case 9:
+            case 8:
+                v.setVertexType(Vertex.Type.Sharper);
+                break;
+            case 7:
+                v.setVertexType(Vertex.Type.Stronger);
+                break;
+            default:
+                v.setVertexType(Vertex.Type.Normal);
+                break;
+        }
     }
 
     public Vertex Pop() {
