@@ -19,6 +19,10 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class Painter implements Screen {
 
+    enum PainterMode{NORMAL,TALLER,STRONGER,SHARPER};
+
+    private PainterMode PaintingMode = PainterMode.NORMAL;
+
     private final String TAG = "PAINTER";
     private final VertexQueue VQueue;
 
@@ -31,7 +35,7 @@ public class Painter implements Screen {
 
     private SpriteBatch batch;
 
-    Painter(World w) {
+    Painter(int ScreenWidth,int ScreenHeight,World w) {
 
         myWorld = w;
         VQueue = w.getVQueue();
@@ -87,11 +91,34 @@ public class Painter implements Screen {
         }
     }
 
+    public void setPaintingMode(PainterMode P,World w) {
+        PaintingMode = P;
+        myWorld = w;
+    }
+
+    /*This is my Game loop
+    * Magic Happnes Here :P
+    * */
     @Override
     public void render(float v) {
 
         myWorld.update();
+        switch(PaintingMode){
 
+            case NORMAL:
+            case SHARPER:
+                NormalPaint();
+                break;
+            case STRONGER:
+                StrongerPaint();
+                break;
+            case TALLER:
+                TallerPaint();
+                break;
+        }
+    }
+
+    private void NormalPaint() {
 
         Vertex.Reset();//reset the Isexplored boolean value
 
@@ -118,19 +145,19 @@ public class Painter implements Screen {
 
                 case UnReachable:
                 case Visible:
-                        batch.draw(Regions[1][0], vertex.x-Regions[1][0].getRegionWidth()/2,
-                                vertex.y-Regions[1][0].getRegionHeight()/2);
-                        break;
+                    batch.draw(Regions[1][0], vertex.x-Regions[1][0].getRegionWidth()/2,
+                            vertex.y-Regions[1][0].getRegionHeight()/2);
+                    break;
                 case Touched:
-                        batch.draw(Regions[0][0], vertex.x - Regions[0][0].getRegionWidth()/2,
+                    batch.draw(Regions[0][0], vertex.x - Regions[0][0].getRegionWidth()/2,
                             vertex.y-Regions[0][0].getRegionHeight()/2);
-                        break;
+                    break;
                 case Reachable:
-                        batch.draw(Regions[0][1], vertex.x - Regions[0][1].getRegionWidth()/2,
+                    batch.draw(Regions[0][1], vertex.x - Regions[0][1].getRegionWidth()/2,
                             vertex.y-Regions[0][1].getRegionHeight()/2);
                     break;
                 case Dead:
-                        break;
+                    break;
 
             }
             switch (vertex.getVertexType()) {
@@ -138,9 +165,9 @@ public class Painter implements Screen {
                 case Normal: break;
                 case Sharper:
                 case Stronger:
-                        batch.draw(Regions[1][1], vertex.x - Regions[1][1].getRegionWidth()/2,
+                    batch.draw(Regions[1][1], vertex.x - Regions[1][1].getRegionWidth()/2,
                             vertex.y-Regions[1][1].getRegionHeight()/2);
-                        break;
+                    break;
                 case Taller:break;
 
             }
@@ -169,6 +196,13 @@ public class Painter implements Screen {
         /**/
     }
 
+    private void StrongerPaint() {
+
+    }
+
+    private void TallerPaint() {
+
+    }
     @Override
     public void resize(int width, int height) {
     }

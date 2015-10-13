@@ -25,6 +25,8 @@ public class InputHandler implements InputProcessor {
         Node_Size = world.getNodeSize();
     }
 
+    public void setMyWorld(World w) { myWorld = w; }
+
     @Override
     public boolean keyDown(int i) {
         return false;

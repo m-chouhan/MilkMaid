@@ -15,9 +15,9 @@ public class Starter extends Game {
         Gdx.app.log(TAG, "wid--"+ Gdx.graphics.getWidth()+"Hei--"+Gdx.graphics.getHeight());
 
         VertexQueue VQ = new VertexQueue(25);
-
-        MyGameWorld = new World(Gdx.graphics.getWidth(),Gdx.graphics.getHeight(),VQ);
-        
+        int width = Gdx.graphics.getWidth(),height = Gdx.graphics.getHeight();
+        MyGameWorld = new World(width,height,VQ);
+        Painter P = new Painter(width,height,MyGameWorld);
         Gdx.input.setInputProcessor(new InputHandler(MyGameWorld));
         setScreen(MyGameWorld.getPainterScreen());
     }

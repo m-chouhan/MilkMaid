@@ -13,7 +13,7 @@ import java.util.Random;
 
 public class World {
 
-    private final String TAG = "WORLD";
+    private final String TAG = "WORLD CLASS";
 
     private float Speed = 1.0f;
     private VertexQueue VQueue;
@@ -23,7 +23,7 @@ public class World {
     private OrthographicCamera camera;
     private Vertex LastTouched = null;
 
-    public final int Height = 480,Max_Width = 1600; //Height of our world
+    public final int Height = 480; //Height of our world
     public final int ScreenWidth,ScreenHeight;
     public final int NODE_SIZE = 120;
 
@@ -38,7 +38,7 @@ public class World {
         camera.rotate(180);
         camera.update();
 
-        myPainter = new Painter(this);
+        myPainter = new Painter(width,height,this);
         InflateWorld();
     }
 
