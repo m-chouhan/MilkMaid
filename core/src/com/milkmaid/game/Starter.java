@@ -13,7 +13,11 @@ public class Starter extends Game {
     @Override
     public void create() {
         Gdx.app.log(TAG, "wid--"+ Gdx.graphics.getWidth()+"Hei--"+Gdx.graphics.getHeight());
-        MyGameWorld = new World(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
+
+        VertexQueue VQ = new VertexQueue(25);
+
+        MyGameWorld = new World(Gdx.graphics.getWidth(),Gdx.graphics.getHeight(),VQ);
+        
         Gdx.input.setInputProcessor(new InputHandler(MyGameWorld));
         setScreen(MyGameWorld.getPainterScreen());
     }

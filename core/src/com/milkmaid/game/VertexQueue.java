@@ -23,6 +23,7 @@ public class VertexQueue {
     }
 
     public int getSize() { return size; }
+    public int getMax_size() { return max_size; }
 
     public Vertex getVertex(int i) {
         if( i < size && i>= 0) return Array[ (bottom + i) % max_size ];

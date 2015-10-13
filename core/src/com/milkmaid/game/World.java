@@ -1,5 +1,6 @@
 package com.milkmaid.game;
 
+
 /**
  * Created by maximus_prime on 27/9/15.
  */
@@ -16,7 +17,6 @@ public class World {
 
     private float Speed = 1.0f;
     private VertexQueue VQueue;
-    private final int MAX_ELEMENTS = 25;
     private Painter myPainter;
     private boolean Game_Started = false;
     private Random RandomGenerator = new Random();
@@ -27,11 +27,11 @@ public class World {
     public final int ScreenWidth,ScreenHeight;
     public final int NODE_SIZE = 120;
 
-    public World(int width,int height) {
+    public World(int width,int height,VertexQueue vqueue) {
 
         ScreenWidth = width; ScreenHeight = height;
 
-        VQueue = new VertexQueue(MAX_ELEMENTS);
+        VQueue = vqueue;
 
         camera = new OrthographicCamera(ScreenWidth,ScreenHeight); //viewport dimensions
         camera.position.set(camera.viewportWidth / 2f, Height / 2f, 0);
@@ -44,13 +44,11 @@ public class World {
 
     private void InflateWorld() {
 
-        int window = 150;//Max_Width/MAX_ELEMENTS;
         int x = 100,y = Height/2;
         VQueue.Push(new Vertex(x, y));
 
-        for(int i = 1 ;i<MAX_ELEMENTS;++i) {
-
-            VQueue.Push(new Vertex(0,0 ));
+        for(int i = 1 ;i<VQueue.getMax_size();++i) {
+            VQueue.Push(new Vertex(0,0));
         }
     }
 
@@ -112,8 +110,6 @@ public class World {
         }
 
         int camera_bottom = (int) (camera.position.x - camera.viewportWidth/2);
-        int camera_top = (int) (camera.position.x + camera.viewportWidth/2);
-
         if(VQueue.getVertex(0).x <camera_bottom) {
 
             VQueue.Push(VQueue.Pop());
