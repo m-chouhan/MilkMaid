@@ -19,6 +19,7 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class Painter implements Screen {
 
+    //TODO: change this to game state
     enum PainterMode{NORMAL,TALLER,STRONGER,SHARPER};
 
     private PainterMode PaintingMode = PainterMode.NORMAL;

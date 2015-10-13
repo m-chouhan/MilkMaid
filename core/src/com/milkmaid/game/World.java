@@ -93,9 +93,17 @@ public class World {
 
                 LastTouched = vertex;
                 LastTouched.changeState(Vertex.Status.Touched);
+                switch (LastTouched.getVertexType()){
 
+                    case Sharper:
+                            break;
+                    case Stronger:
+                    case Normal:
+                    case Bonus:
+                }
                 for (HalfEdge h : LastTouched.getEdgeList())
                     h.getDst().changeState(Vertex.Status.Reachable);
+                return;
             }
         }
     }
