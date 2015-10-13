@@ -20,9 +20,9 @@ import com.badlogic.gdx.math.Rectangle;
 public class Painter implements Screen {
 
     //TODO: change this to game state
-    enum PainterMode{NORMAL,TALLER,STRONGER,SHARPER};
+//    enum PainterMode{NORMAL,TALLER,STRONGER,SHARPER};
 
-    private PainterMode PaintingMode = PainterMode.NORMAL;
+    private GameSuperviser.GameState PaintingMode = GameSuperviser.GameState.NORMAL;
 
     private final String TAG = "PAINTER";
     private final VertexQueue VQueue;
@@ -92,9 +92,8 @@ public class Painter implements Screen {
         }
     }
 
-    public void setPaintingMode(PainterMode P,World w) {
-        PaintingMode = P;
-        myWorld = w;
+    public void setPaintingMode(GameSuperviser.GameState g) {
+        PaintingMode = g;
     }
 
     /*This is my Game loop
@@ -103,7 +102,7 @@ public class Painter implements Screen {
     @Override
     public void render(float v) {
 
-        myWorld.update();
+        //myWorld.update();
         switch(PaintingMode){
 
             case NORMAL:
@@ -112,9 +111,6 @@ public class Painter implements Screen {
                 break;
             case STRONGER:
                 StrongerPaint();
-                break;
-            case TALLER:
-                TallerPaint();
                 break;
         }
     }

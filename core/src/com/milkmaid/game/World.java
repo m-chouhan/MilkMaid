@@ -23,13 +23,16 @@ public class World {
     private OrthographicCamera camera;
     private Vertex LastTouched = null;
 
+    protected final GameSuperviser Superviser;
+
     public final int Height = 480; //Height of our world
     public final int ScreenWidth,ScreenHeight;
     public final int NODE_SIZE = 120;
 
-    public World(int width,int height,VertexQueue vqueue) {
+    public World(VertexQueue vqueue,GameSuperviser superviser) {
 
-        ScreenWidth = width; ScreenHeight = height;
+        Superviser = superviser;
+        ScreenWidth = Superviser.getWidth(); ScreenHeight = Superviser.getHeight();
 
         VQueue = vqueue;
 
@@ -38,7 +41,6 @@ public class World {
         camera.rotate(180);
         camera.update();
 
-        myPainter = new Painter(width,height,this);
         InflateWorld();
     }
 
