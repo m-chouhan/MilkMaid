@@ -53,29 +53,48 @@ public class VertexQueue {
     }
     public void Push(Vertex v) {
 
+        if(size >= max_size) return;
+
         if( size == 0 ) {
             Array[bottom] = v;
             size++;
+            return;
         }
-        else if( size < max_size ) {
 
-            int a = 0,b = 0;
+        int x = (int) (getVertex(size - 1).x + (R.nextInt(15)+5)*10);
+        int y = R.nextInt(4) * (120);
 
-            if( size < 7) {
-                a = R.nextInt(size);
-                b = R.nextInt(size);b = a;
+        if( size > 3) {
+            int y1 = 0,y2 = 0,y3 = 0;
+            do {
+                y = R.nextInt(4) * (120);
+                y1 = (int) Math.abs(y - getVertex(size - 1).y);
+                y2 = (int) Math.abs(y - getVertex(size - 2).y);
+                y3 = (int) Math.abs(y - getVertex(size - 3).y);
             }
-            else {
-                a = size - (R.nextInt(3) + 1);
-                b = size - (R.nextInt(3) + 1);
-
-            }
-            v.Connect(getVertex(a),1);
-            if( a != b ) v.Connect(getVertex(b),1);
-
-            Array[(bottom + size) % max_size] = v;
-            size++;
+            while( y1 < 10 || y2 < 10 || y3 < 10);
         }
+
+        v.x = x;v.y = y;
+
+        int a = 0,b = 0;
+
+        if( size < 7) {
+            a = R.nextInt(size);
+            b = R.nextInt(size);b = a;
+        }
+        else {
+            a = size - (R.nextInt(3) + 1);
+            b = size - (R.nextInt(3) + 1);
+
+        }
+
+        v.Connect(getVertex(a),1);
+        if( a != b ) v.Connect(getVertex(b),1);
+
+        Array[(bottom + size) % max_size] = v;
+        size++;
+
         v.changeState(Vertex.Status.Invisible);
         //TODO: Add case for superpower Taller :/
         switch ((int)(Math.random()*30) ) {
