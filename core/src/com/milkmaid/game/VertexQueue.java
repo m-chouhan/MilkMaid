@@ -105,8 +105,6 @@ public class VertexQueue {
                 v.setVertexType(Vertex.Type.Sharper);
                 break;
             case 7:
-                v.setVertexType(Vertex.Type.Stronger);
-                break;
             default:
                 v.setVertexType(Vertex.Type.Normal);
                 break;

@@ -5,27 +5,23 @@ package com.milkmaid.game;
  * Created by maximus_prime on 27/9/15.
  */
 
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-
-import java.util.Random;
 
 
 public class World {
 
     private final String TAG = "WORLD CLASS";
 
-    private float Speed = 1.0f;
-    private VertexQueue VQueue;
-    private Painter myPainter;
-    private boolean Game_Started = false;
-    private Random RandomGenerator = new Random();
-    private OrthographicCamera camera;
-    private Vertex LastTouched = null;
+    protected float Speed = 0.0f;
+    protected Vertex LastTouched = null;
+
+    protected VertexQueue VQueue;
+    protected boolean Game_Started = false;
+    protected OrthographicCamera camera;
 
     protected final GameSuperviser Superviser;
 
-    public final int Height = 480; //Height of our world
+    public final int Height ; //Height of our world
     public final int ScreenWidth,ScreenHeight;
     public final int NODE_SIZE = 120;
 
@@ -33,13 +29,10 @@ public class World {
 
         Superviser = superviser;
         ScreenWidth = Superviser.getWidth(); ScreenHeight = Superviser.getHeight();
-
+        Height = superviser.getWorldHeight();
         VQueue = vqueue;
 
-        camera = new OrthographicCamera(ScreenWidth,ScreenHeight); //viewport dimensions
-        camera.position.set(camera.viewportWidth / 2f, Height / 2f, 0);
-        camera.rotate(180);
-        camera.update();
+        camera = superviser.getDisplayCamera();
 
         InflateWorld();
     }
@@ -62,16 +55,30 @@ public class World {
 
     public VertexQueue getVQueue() {return VQueue; }
 
-    public Screen getPainterScreen() { return myPainter; }
+    //public Screen getPainterScreen() { return myPainter; }
     public OrthographicCamera getCamera() { return camera; }
     public int getNodeSize() { return NODE_SIZE/5;}
     public Vertex getLastTouched() { return LastTouched; }
 
+    void setLastTouched(Vertex last) { LastTouched = last;}
+    //NOT IN USE FOR NOW :)
     public void VertexUnTouched(Vertex vertex) {
 
     }
 
+    public void startGame() {
+        Game_Started = true;
+    }
+
+    public void setSpeed(float f) {
+        Speed = f;
+    }
+
+    public float getSpeed() { return Speed;}
+
     public void VertexTouched(Vertex vertex) {
+
+        if(LastTouched == vertex ) return;//eliminate repeated events
 
         //TODO: Check for vertext type and set their control
         if( LastTouched == null) {
@@ -80,8 +87,9 @@ public class World {
               LastTouched.changeState(Vertex.Status.Touched);
               for(HalfEdge h:LastTouched.getEdgeList())
                   h.getDst().changeState(Vertex.Status.Reachable);
-              Game_Started = true;
 
+              startGame();
+              setSpeed(1.0f);
           }
           return;
         }
@@ -98,6 +106,7 @@ public class World {
                 switch (LastTouched.getVertexType()){
 
                     case Sharper:
+                            Superviser.SwitchState(GameSuperviser.GameState.SHARPER);
                             break;
                     case Stronger:
                     case Normal:
@@ -115,7 +124,6 @@ public class World {
         if(Game_Started) {
             camera.translate(Speed, 0);
             camera.update();
-            myPainter.updateBackground(Speed/2);
             Speed += 0.002f;
         }
 
