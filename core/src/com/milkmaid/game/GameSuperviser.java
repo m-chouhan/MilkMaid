@@ -15,6 +15,8 @@ public class GameSuperviser implements Screen {
 
     private OrthographicCamera DisplayCamera;
     private final int Width,Height,WorldHeight= 480;
+    private int Score = 0;
+
     private Painter Renderer;
     private World NormalWorld ,  StrongerWorld , CurrentWorld;
     private SuperSharperWorld SharperWorld;
@@ -36,7 +38,7 @@ public class GameSuperviser implements Screen {
         SharperWorld = new SuperSharperWorld(VQ,this);
         CurrentWorld = NormalWorld;
 
-        Renderer = new Painter(width,height,NormalWorld);
+        Renderer = new Painter(VQ,this);
         InputProcessor = new InputHandler(NormalWorld);
         Gdx.input.setInputProcessor(InputProcessor);
     }
@@ -47,11 +49,17 @@ public class GameSuperviser implements Screen {
 
     public OrthographicCamera getDisplayCamera() { return DisplayCamera; }
 
+    public void updateScore(int weight) {
+        Score += weight;
+    }
+
+    public int getScore() { return Score; }
+
     public void SwitchState(GameState g) {
         CurrentGameState = g;
         Renderer.setPaintingMode(g);
 
-        switch (g) {
+        switch (CurrentGameState) {
             case NORMAL:
                 NormalWorld.setLastTouched(CurrentWorld.getLastTouched());
                 CurrentWorld = NormalWorld;
@@ -74,6 +82,9 @@ public class GameSuperviser implements Screen {
 
     }
 
+    /*This is my Game loop
+    * Magic Happnes Here :P
+    * */
     @Override
     public void render(float v) {
 

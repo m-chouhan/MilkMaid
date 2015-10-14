@@ -23,7 +23,7 @@ public class SuperSharperWorld extends World {
     private void MoveTo(float xpos ) {
 
         Speed = (xpos-camera.position.x)/timeStep;
-        Speed *= 0.4f;
+        //Speed *= 0.4f;
     }
 
     @Override
@@ -35,10 +35,14 @@ public class SuperSharperWorld extends World {
                 Superviser.SwitchState(GameSuperviser.GameState.NORMAL);
                 return;
             }
+
+            LastTouched.changeState(Vertex.Status.Dead);
+
             LastTouched = Stack.removeFirst();
 
             LastTouched.changeState(Vertex.Status.Touched);
             MoveTo(LastTouched.x);
+            Superviser.updateScore(LastTouched.getWeight());
             counter = 0;
         }
 
@@ -55,21 +59,24 @@ public class SuperSharperWorld extends World {
     public void searchPath(Vertex v) {
 
         Vertex top = VQueue.getVertex(VQueue.getSize() -1);
-        if( !Greedy_DFS(v,top,Stack))
-            Gdx.app.log(TAG,"Not Reachable");
-        /*for(Vertex p:Stack) {
-            p.changeState(Vertex.Status.Touched);
-        }*/
-        startGame();
-        setSpeed(4.0f);
+        LastTouched = v;
+        for(HalfEdge e: v.getEdgeList()) {
+            if (Greedy_DFS(e.getDst(), top, Stack)) {
+                Gdx.app.log(TAG, "Reachable :)");
+                return;
+            }
+        }
+        Gdx.app.log(TAG, "Not Reachable :(");
     }
 
+    //TODO: Implement Greedy Part :P
     private boolean Greedy_DFS(Vertex v, Vertex top, LinkedList<Vertex> stack) {
         if(v == top) {
             stack.addLast(v);
             return true;
         }
-        if( stack.indexOf(v) != -1) return false;
+        if( stack.indexOf(v) != -1 || v.getCurrentState() == Vertex.Status.Touched ) return false;
+
         stack.addLast(v);
         for( HalfEdge e: v.getEdgeList()) {
             if(Greedy_DFS(e.getDst(),top,stack)) return true;

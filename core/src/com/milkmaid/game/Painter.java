@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -19,30 +20,33 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class Painter implements Screen {
 
-    //TODO: change this to game state
-//    enum PainterMode{NORMAL,TALLER,STRONGER,SHARPER};
-
     private GameSuperviser.GameState PaintingMode = GameSuperviser.GameState.NORMAL;
 
     private final String TAG = "PAINTER";
     private final VertexQueue VQueue;
 
-    private World myWorld;
+
     private OrthographicCamera camera;
     private ShapeRenderer debugRenderer = new ShapeRenderer();
     private final int Width,Height;
     private TextureRegion Regions[][];
     private Sprite BackgroundSprites[] = new Sprite[4];
-
     private SpriteBatch batch;
+    private BitmapFont Score;
+    private GameSuperviser Superviser;
 
-    Painter(int ScreenWidth,int ScreenHeight,World w) {
+    Painter(VertexQueue VQ,GameSuperviser superviser) {
 
-        myWorld = w;
-        VQueue = w.getVQueue();
-        Width = myWorld.ScreenWidth;
-        Height = myWorld.ScreenHeight;
-        camera = myWorld.getCamera();
+        Superviser = superviser;
+
+        VQueue = VQ;
+        Width = Superviser.getWidth();
+        Height = Superviser.getHeight();
+        camera = superviser.getDisplayCamera();
+
+        Score = new BitmapFont();
+        Score.setColor(Color.CYAN);
+        Score.getData().setScale(3);
 
         Texture SpriteSheet = new Texture(Gdx.files.internal("short_sprites.png"));
         Texture background = new Texture(Gdx.files.internal("backgroundtexture2.png"));
@@ -87,7 +91,6 @@ public class Painter implements Screen {
             int rtop = (int) (r.getX()+r.getWidth());
             if(rtop < camera_bottom) {
                 s.setPosition(s.getX()+r.getWidth()*4,250);
-                //break;
             }
         }
     }
@@ -96,13 +99,9 @@ public class Painter implements Screen {
         PaintingMode = g;
     }
 
-    /*This is my Game loop
-    * Magic Happnes Here :P
-    * */
     @Override
     public void render(float v) {
 
-        //myWorld.update();
         switch(PaintingMode){
 
             case NORMAL:
@@ -170,6 +169,7 @@ public class Painter implements Screen {
             }
         }
 
+        Score.draw(batch,""+Superviser.getScore(),camera_top-100,520);
         batch.end();
 
 

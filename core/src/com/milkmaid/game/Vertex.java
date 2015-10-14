@@ -18,6 +18,7 @@ public class Vertex extends Vector2 {
     private ArrayList<HalfEdge> EdgeList = new ArrayList<HalfEdge>();
     private boolean explored = false;
     private Type VertexType = Type.Normal;
+    private final int weight = 100;
 
     public Vertex(int x,int y) {
 
@@ -29,8 +30,9 @@ public class Vertex extends Vector2 {
 
     public Type getVertexType() { return VertexType;}
     public void setVertexType(Type t) { VertexType = t; }
-
+    public int getWeight() { return weight; }
     public Status getCurrentState() { return currentState; }
+
     public void changeState(Status s) {
 
         //TODO: add state transitions
