@@ -63,17 +63,17 @@ public class VertexQueue {
         }
 
         int x = (int) (getVertex(size - 1).x + (R.nextInt(15)+5)*10);
-        int y = R.nextInt(4) * (120);
+        int y = R.nextInt(12) * (40);
 
         if( size > 3) {
             int y1 = 0,y2 = 0,y3 = 0;
             do {
-                y = R.nextInt(4) * (120);
+                y = R.nextInt(12) * (40);
                 y1 = (int) Math.abs(y - getVertex(size - 1).y);
                 y2 = (int) Math.abs(y - getVertex(size - 2).y);
                 y3 = (int) Math.abs(y - getVertex(size - 3).y);
             }
-            while( y1 < 10 || y2 < 10 || y3 < 10);
+            while( y1 < 20 || y2 < 20 || y3 < 20);
         }
 
         v.x = x;v.y = y;
