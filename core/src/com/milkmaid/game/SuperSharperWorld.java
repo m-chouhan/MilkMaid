@@ -15,6 +15,7 @@ public class SuperSharperWorld extends World {
 
     private final float timeStep = 20;
     private float counter = timeStep;
+    private Vertex Top;
 
     public SuperSharperWorld(VertexQueue vqueue,GameSuperviser superviser) {
         super(vqueue,superviser);
@@ -26,6 +27,8 @@ public class SuperSharperWorld extends World {
         //Speed *= 0.4f;
     }
 
+    private int correction_counter = 2;
+
     @Override
     public void update() {
 
@@ -36,11 +39,17 @@ public class SuperSharperWorld extends World {
                 return;
             }
 
+            for (HalfEdge h : LastTouched.getEdgeList())
+                h.getDst().changeState(Vertex.Status.UnReachable);
+
             LastTouched.changeState(Vertex.Status.Dead);
 
             LastTouched = Stack.removeFirst();
 
             LastTouched.changeState(Vertex.Status.Touched);
+            for (HalfEdge h : LastTouched.getEdgeList())
+                h.getDst().changeState(Vertex.Status.Reachable);
+
             MoveTo(LastTouched.x);
             Superviser.updateScore(LastTouched.getWeight());
             counter = 0;
@@ -51,17 +60,27 @@ public class SuperSharperWorld extends World {
 
         int camera_bottom = (int) (camera.position.x - camera.viewportWidth/2);
         if(VQueue.getVertex(0).x <camera_bottom)
-            VQueue.Push(VQueue.Pop());
+        {
+            Vertex v = VQueue.Pop();
+            VQueue.Push(v);
+            //Do this only limited times to ensure correctness
+            if(correction_counter > 0) {
+                v.Connect(Top, v.getWeight());
+                correction_counter--;
+            }
+        }
+
         counter++;
     }
 
     //Searches path from lastTouched Vertext to topmost vertex
     public void searchPath(Vertex v) {
 
-        Vertex top = VQueue.getVertex(VQueue.getSize() -1);
+        correction_counter = 2;
+        Top = VQueue.getVertex(VQueue.getSize() -1);
         LastTouched = v;
         for(HalfEdge e: v.getEdgeList()) {
-            if (Greedy_DFS(e.getDst(), top, Stack)) {
+            if (Greedy_DFS(e.getDst(), Top, Stack)) {
                 Gdx.app.log(TAG, "Reachable :)");
                 return;
             }

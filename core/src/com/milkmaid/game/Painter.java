@@ -31,6 +31,8 @@ public class Painter implements Screen {
     private final int Width,Height;
     private TextureRegion Regions[][];
     private Sprite BackgroundSprites[] = new Sprite[4];
+    private final Sprite BackgroundGlow;
+
     private SpriteBatch batch;
     private BitmapFont Score;
     private GameSuperviser Superviser;
@@ -48,12 +50,15 @@ public class Painter implements Screen {
         Score.setColor(Color.CYAN);
         Score.getData().setScale(3);
 
-        Texture SpriteSheet = new Texture(Gdx.files.internal("short_sprites.png"));
+        Texture SpriteSheet = new Texture(Gdx.files.internal("sprites_ext.png"));
         Texture background = new Texture(Gdx.files.internal("backgroundtexture2.png"));
         TextureRegion Backgrounds[][] = TextureRegion.split(background,301,200);
 
-        int width = SpriteSheet.getWidth()/2,height = SpriteSheet.getHeight()/2;
+        int width = SpriteSheet.getWidth()/4,height = SpriteSheet.getHeight()/2;
         Regions = TextureRegion.split(SpriteSheet,width,height);
+
+        BackgroundGlow = new Sprite(Regions[1][0]);
+        BackgroundGlow.setScale(1.5f);
 
         BackgroundSprites[0] = new Sprite(Backgrounds[0][0]);
         BackgroundSprites[1] = new Sprite(Backgrounds[0][1]);
@@ -141,16 +146,22 @@ public class Painter implements Screen {
 
                 case UnReachable:
                 case Visible:
-                    batch.draw(Regions[1][0], vertex.x-Regions[1][0].getRegionWidth()/2,
-                            vertex.y-Regions[1][0].getRegionHeight()/2);
+                    batch.draw(Regions[1][1], vertex.x-Regions[1][1].getRegionWidth()/2,
+                            vertex.y-Regions[1][1].getRegionHeight()/2);
                     break;
                 case Touched:
-                    batch.draw(Regions[0][0], vertex.x - Regions[0][0].getRegionWidth()/2,
-                            vertex.y-Regions[0][0].getRegionHeight()/2);
+                    batch.draw(Regions[0][2], vertex.x - Regions[0][2].getRegionWidth()/2,
+                            vertex.y-Regions[0][2].getRegionHeight()/2);
                     break;
                 case Reachable:
-                    batch.draw(Regions[0][1], vertex.x - Regions[0][1].getRegionWidth()/2,
-                            vertex.y-Regions[0][1].getRegionHeight()/2);
+                    //draw holow background then original image
+                    BackgroundGlow.setPosition(vertex.x - Regions[1][0].getRegionWidth()/2,
+                            vertex.y-Regions[1][0].getRegionHeight()/2);
+                    BackgroundGlow.draw(batch);
+//                    batch.draw(Regions[1][0], vertex.x - Regions[1][0].getRegionWidth()/2,
+//                            vertex.y-Regions[1][0].getRegionHeight()/2);
+                    batch.draw(Regions[1][1], vertex.x-Regions[1][1].getRegionWidth()/2,
+                            vertex.y-Regions[1][1].getRegionHeight()/2);
                     break;
                 case Dead:
                     break;
@@ -161,8 +172,8 @@ public class Painter implements Screen {
                 case Normal: break;
                 case Sharper:
                 case Stronger:
-                    batch.draw(Regions[1][1], vertex.x - Regions[1][1].getRegionWidth()/2,
-                            vertex.y-Regions[1][1].getRegionHeight()/2);
+                    batch.draw(Regions[0][1], vertex.x - Regions[0][1].getRegionWidth()/2,
+                            vertex.y-Regions[0][1].getRegionHeight()/2);
                     break;
                 case Taller:break;
 

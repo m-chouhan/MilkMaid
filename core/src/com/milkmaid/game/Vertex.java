@@ -76,6 +76,11 @@ public class Vertex extends Vector2 {
     }
     public void Connect(Vertex v,int weight) {
 
+        //ignores duplicate edges
+        for(HalfEdge e: EdgeList) {
+            if(e.getDst() == v) return;
+        }
+
         HalfEdge H1 = new HalfEdge(this,v,weight);
         HalfEdge H2 = new HalfEdge(v,this,weight);
 

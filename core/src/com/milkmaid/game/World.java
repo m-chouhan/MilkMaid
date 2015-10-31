@@ -127,7 +127,7 @@ public class World {
         if(Game_Started) {
             camera.translate(Speed, 0);
             camera.update();
-            Speed += 0.002f;
+            Speed += 0.005f;
         }
 
         int camera_bottom = (int) (camera.position.x - camera.viewportWidth/2);
