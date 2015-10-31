@@ -144,24 +144,19 @@ public class Painter implements Screen {
             if(vertex.getCurrentState() == Vertex.Status.Invisible) vertex.changeState(Vertex.Status.Visible);
             switch (vertex.getCurrentState()) {
 
-                case UnReachable:
-                case Visible:
-                    batch.draw(Regions[1][1], vertex.x-Regions[1][1].getRegionWidth()/2,
-                            vertex.y-Regions[1][1].getRegionHeight()/2);
-                    break;
-                case Touched:
-                    batch.draw(Regions[0][2], vertex.x - Regions[0][2].getRegionWidth()/2,
-                            vertex.y-Regions[0][2].getRegionHeight()/2);
-                    break;
                 case Reachable:
                     //draw holow background then original image
                     BackgroundGlow.setPosition(vertex.x - Regions[1][0].getRegionWidth()/2,
                             vertex.y-Regions[1][0].getRegionHeight()/2);
                     BackgroundGlow.draw(batch);
-//                    batch.draw(Regions[1][0], vertex.x - Regions[1][0].getRegionWidth()/2,
-//                            vertex.y-Regions[1][0].getRegionHeight()/2);
-                    batch.draw(Regions[1][1], vertex.x-Regions[1][1].getRegionWidth()/2,
+                case UnReachable:
+                case Visible:
+                    batch.draw(Regions[1][1], vertex.x - Regions[1][1].getRegionWidth() / 2,
                             vertex.y-Regions[1][1].getRegionHeight()/2);
+                    break;
+                case Touched:
+                    batch.draw(Regions[0][2], vertex.x - Regions[0][2].getRegionWidth()/2,
+                            vertex.y-Regions[0][2].getRegionHeight()/2);
                     break;
                 case Dead:
                     break;
@@ -171,9 +166,12 @@ public class Painter implements Screen {
 
                 case Normal: break;
                 case Sharper:
-                case Stronger:
                     batch.draw(Regions[0][1], vertex.x - Regions[0][1].getRegionWidth()/2,
                             vertex.y-Regions[0][1].getRegionHeight()/2);
+                    break;
+                case Stronger:
+                    batch.draw(Regions[0][0], vertex.x - Regions[0][0].getRegionWidth()/2,
+                            vertex.y-Regions[0][0].getRegionHeight()/2);
                     break;
                 case Taller:break;
 

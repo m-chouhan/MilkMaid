@@ -102,9 +102,10 @@ public class VertexQueue {
 
             case 9:
             case 8:
-                v.setVertexType(Vertex.Type.Sharper);
-                break;
             case 7:
+                v.setVertexType(Vertex.Type.Stronger);
+                break;
+
             default:
                 v.setVertexType(Vertex.Type.Normal);
                 break;
