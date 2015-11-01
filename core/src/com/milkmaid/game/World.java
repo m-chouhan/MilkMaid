@@ -34,17 +34,6 @@ public class World {
 
         camera = superviser.getDisplayCamera();
 
-        InflateWorld();
-    }
-
-    private void InflateWorld() {
-
-        int x = 100,y = Height/2;
-        VQueue.Push(new Vertex(x, y));
-
-        for(int i = 1 ;i<VQueue.getMax_size();++i) {
-            VQueue.Push(new Vertex(0,0));
-        }
     }
 
     private int generateProbability(double val) {
@@ -111,6 +100,8 @@ public class World {
                             Superviser.SwitchState(GameSuperviser.GameState.SHARPER);
                             break;
                     case Stronger:
+                            Superviser.SwitchState(GameSuperviser.GameState.STRONGER);
+                            break;
                     case Normal:
                     case Bonus:
                 }

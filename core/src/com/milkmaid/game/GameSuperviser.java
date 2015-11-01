@@ -1,6 +1,7 @@
 package com.milkmaid.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 
@@ -17,8 +18,11 @@ public class GameSuperviser implements Screen {
     private final int Width,Height,WorldHeight= 480;
     private int Score = 0;
 
-    private Painter Renderer;
-    private World NormalWorld ,  StrongerWorld , CurrentWorld;
+    private Painter NormalRenderer,CurrentRenderer,StrongerRenderer;
+
+    private World NormalWorld , CurrentWorld;
+    private SuperStrongerWorld StrongerWorld;
+
     private SuperSharperWorld SharperWorld;
 
     private InputHandler InputProcessor;
@@ -28,19 +32,23 @@ public class GameSuperviser implements Screen {
         Width = width;
         Height = height;
         VertexQueue VQ = new VertexQueue(25);
+        InflateVertices(VQ);
+
         DisplayCamera = new OrthographicCamera(Width,Height); //viewport dimensions
         DisplayCamera.position.set(DisplayCamera.viewportWidth / 2f,
-                WorldHeight/2, 0);
+                WorldHeight / 2, 0);
         DisplayCamera.rotate(180);
         DisplayCamera.update();
 
         NormalWorld = new World(VQ,this);
         SharperWorld = new SuperSharperWorld(VQ,this);
+        StrongerWorld = new SuperStrongerWorld(VQ,this);
         CurrentWorld = NormalWorld;
 
-        Renderer = new Painter(VQ,this);
-        InputProcessor = new InputHandler(NormalWorld);
-        Gdx.input.setInputProcessor(InputProcessor);
+        NormalRenderer = new Painter(VQ,this);
+        StrongerRenderer = new StrongerPainter(VQ,
+                ((SuperStrongerWorld)StrongerWorld).getPlayerPosition(),this);
+        CurrentRenderer = NormalRenderer;
     }
 
     public int getWidth() { return Width; }
@@ -48,6 +56,16 @@ public class GameSuperviser implements Screen {
     public int getWorldHeight() { return WorldHeight; }
 
     public OrthographicCamera getDisplayCamera() { return DisplayCamera; }
+
+    private void InflateVertices(VertexQueue VQueue) {
+
+        int x = 100,y = WorldHeight/2;
+        VQueue.Push(new Vertex(x, y));
+
+        for(int i = 1 ;i<VQueue.getMax_size();++i) {
+            VQueue.Push(new Vertex(0,0));
+        }
+    }
 
     public void updateScore(int weight) {
         Score += weight;
@@ -57,22 +75,29 @@ public class GameSuperviser implements Screen {
 
     public void SwitchState(GameState g) {
         CurrentGameState = g;
-        Renderer.setPaintingMode(g);
+        CurrentRenderer.setPaintingMode(g);
 
         switch (CurrentGameState) {
             case NORMAL:
                 NormalWorld.setLastTouched(CurrentWorld.getLastTouched());
                 CurrentWorld = NormalWorld;
+                InputProcessor.Enable();
                 InputProcessor.setMyWorld(NormalWorld);
                 break;
             case SHARPER:
+                InputProcessor.Enable();
                 InputProcessor.setMyWorld(SharperWorld);
                 SharperWorld.searchPath(NormalWorld.getLastTouched());
                 CurrentWorld = SharperWorld;
                 break;
             case STRONGER:
+
+                StrongerWorld.startGame(CurrentWorld.getLastTouched());
                 CurrentWorld = StrongerWorld;
-                InputProcessor.setMyWorld(StrongerWorld);
+                CurrentRenderer = StrongerRenderer;
+                InputProcessor.Disable();
+                //InputProcessor.setMyWorld(StrongerWorld);
+
                 break;
 
         }
@@ -80,6 +105,11 @@ public class GameSuperviser implements Screen {
     @Override
     public void show() {
 
+        InputProcessor = new InputHandler(NormalWorld);
+        InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(InputProcessor);
+        multiplexer.addProcessor(StrongerWorld);
+        Gdx.input.setInputProcessor(multiplexer);
     }
 
     /*This is my Game loop
@@ -89,8 +119,8 @@ public class GameSuperviser implements Screen {
     public void render(float v) {
 
         CurrentWorld.update();
-        Renderer.updateBackground(CurrentWorld.getSpeed() / 2);
-        Renderer.render(v);
+        CurrentRenderer.updateBackground(CurrentWorld.getSpeed() / 2);
+        CurrentRenderer.render(v);
     }
 
     @Override

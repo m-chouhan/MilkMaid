@@ -23,19 +23,18 @@ public class Painter implements Screen {
     private GameSuperviser.GameState PaintingMode = GameSuperviser.GameState.NORMAL;
 
     private final String TAG = "PAINTER";
-    private final VertexQueue VQueue;
 
-
-    private OrthographicCamera camera;
-    private ShapeRenderer debugRenderer = new ShapeRenderer();
-    private final int Width,Height;
-    private TextureRegion Regions[][];
-    private Sprite BackgroundSprites[] = new Sprite[4];
+    protected final VertexQueue VQueue;
+    protected OrthographicCamera camera;
+    protected ShapeRenderer debugRenderer = new ShapeRenderer();
+    protected final int Width,Height;
+    protected TextureRegion Regions[][];
+    protected Sprite BackgroundSprites[] = new Sprite[4];
     private final Sprite BackgroundGlow;
 
-    private SpriteBatch batch;
-    private BitmapFont Score;
-    private GameSuperviser Superviser;
+    protected SpriteBatch batch;
+    protected BitmapFont Score;
+    protected GameSuperviser Superviser;
 
     Painter(VertexQueue VQ,GameSuperviser superviser) {
 
@@ -80,10 +79,6 @@ public class Painter implements Screen {
         batch = new SpriteBatch();
 
     }
-    @Override
-    public void show() {
-
-    }
 
     public void updateBackground(float Velocity) {
 
@@ -107,16 +102,17 @@ public class Painter implements Screen {
     @Override
     public void render(float v) {
 
+        NormalPaint();
+        /*
         switch(PaintingMode){
 
             case NORMAL:
             case SHARPER:
                 NormalPaint();
                 break;
-            case STRONGER:
-                StrongerPaint();
                 break;
         }
+        */
     }
 
     private void NormalPaint() {
@@ -202,13 +198,11 @@ public class Painter implements Screen {
         /**/
     }
 
-    private void StrongerPaint() {
+    @Override
+    public void show() {
 
     }
 
-    private void TallerPaint() {
-
-    }
     @Override
     public void resize(int width, int height) {
     }

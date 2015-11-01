@@ -16,6 +16,7 @@ public class InputHandler implements InputProcessor {
     private World myWorld;
     private VertexQueue VQueue;
     private final int Node_Size,TOUCH_DIM = 10;
+    private boolean Enabled = true;
 
     public InputHandler(World world) {
         myWorld = world;
@@ -23,6 +24,9 @@ public class InputHandler implements InputProcessor {
         VQueue = world.getVQueue();
         Node_Size = world.getNodeSize();
     }
+
+    public void Enable() { Enabled = true;  }
+    public void Disable() {Enabled = false; }
 
     public void setMyWorld(World w) { myWorld = w; }
 
@@ -44,6 +48,7 @@ public class InputHandler implements InputProcessor {
     @Override
     public boolean touchDown(int x, int y, int pointer, int button) {
 
+        if( !Enabled ) return false;
         Vector3 touch3D = camera.unproject(new Vector3(x,y,0));
         Vector2 touchPos = new Vector2(touch3D.x,touch3D.y);
 
@@ -59,11 +64,13 @@ public class InputHandler implements InputProcessor {
                 }
                 v = VQueue.getVertex(++index);
             }while (v.x < touchPos.x + 10);
-        return false;
+        return true;
     }
 
     @Override
     public boolean touchUp(int x, int y, int pointer, int button) {
+
+        if( !Enabled ) return false;
 
         Vector3 touch3D = camera.unproject(new Vector3(x,y,0));
         Vector2 touchPos = new Vector2(touch3D.x,touch3D.y);
@@ -80,26 +87,28 @@ public class InputHandler implements InputProcessor {
             }
             v = VQueue.getVertex(++index);
         }while (v.x < touchPos.x + 10);
-        return false;
+        return true;
     }
 
     @Override
     public boolean touchDragged(int x, int y, int pointer) {
 
+        if( !Enabled ) return false;
+
         touchDown(x,y,pointer,pointer);
         //Vector3 v = camera.unproject(new Vector3(x,y,0));
         //Gdx.app.log(TAG,"TouchDragged");
 
-        return false;
+        return true;
     }
 
     @Override
     public boolean mouseMoved(int i, int i1) {
-        return false;
+        return true;
     }
 
     @Override
     public boolean scrolled(int i) {
-        return false;
+        return true;
     }
 }
