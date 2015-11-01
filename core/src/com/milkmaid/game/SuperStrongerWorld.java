@@ -1,5 +1,6 @@
 package com.milkmaid.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -10,7 +11,9 @@ import com.badlogic.gdx.math.Vector3;
 
 public class SuperStrongerWorld extends World implements InputProcessor {
 
-    enum State{SHOOTING,};
+    private final String TAG = "STRONGERWORLD";
+
+    enum State{SHOOTING,SHOT};
     private PlayerClass Player = new PlayerClass();
     private Vector2 InitialPos = new Vector2();
 
@@ -49,12 +52,22 @@ public class SuperStrongerWorld extends World implements InputProcessor {
 
         if( !touch_disabled ) return;
 
-        if( Player.Position.x < 32 || Player.Position.x > 450 )
-            Player.Velocity.x = -Player.Velocity.x;
+        if( Player.Position.y < 32 || Player.Position.y > 450 )
+            Player.Velocity.y = -Player.Velocity.y;
 
         Player.update();
-        Player.Velocity.x *= 0.9f;
-        Player.Velocity.y *= 0.9f;
+
+        camera.translate(Player.Velocity.x, 0);
+        camera.update();
+
+        int camera_bottom = (int) (camera.position.x - camera.viewportWidth/2);
+
+        if(VQueue.getVertex(0).x <camera_bottom)
+            VQueue.Push(VQueue.Pop());
+
+
+        Player.Velocity.x *= 0.99f;
+        Player.Velocity.y *= 0.99f;
 
     }
 
@@ -83,11 +96,15 @@ public class SuperStrongerWorld extends World implements InputProcessor {
 
         Vector3 touch3D = camera.unproject(new Vector3(x,y,0));
         Vector2 touchPos = new Vector2(touch3D.x,touch3D.y);
+        Gdx.app.log(TAG, "TouchPos " + touchPos.x + "|" + touchPos.y);
+        Gdx.app.log(TAG, "InitialPos " + InitialPos.x + "|" + InitialPos.y);
 
         //touchPos.sub(InitialPos);
         InitialPos.sub(touchPos);
         touch_disabled = true;
+
         player_selected = false;
+        Player.Position.set(touchPos);
         Player.Velocity.set(InitialPos.x/2,InitialPos.y/2);
         //TODO: SHOOT Player
 
@@ -101,6 +118,8 @@ public class SuperStrongerWorld extends World implements InputProcessor {
 
         Vector3 touch3D = camera.unproject(new Vector3(x,y,0));
         Vector2 touchPos = new Vector2(touch3D.x,touch3D.y);
+        if(touchPos.y < 32  ) touchPos.y = 32;
+        if(touchPos.y > 450 ) touchPos.y = 450;
         Player.Position.set(touchPos);
 
         return false;
