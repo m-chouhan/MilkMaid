@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
@@ -46,6 +47,10 @@ public class Painter implements Screen {
         camera = superviser.getDisplayCamera();
 
         Score = new BitmapFont();
+//        Score = new BitmapFont(Gdx.files.internal("Calibri.fnt"),Gdx.files.internal("Calibri.png"),false);
+//        TextureAtlas textureAtlas = new TextureAtlas("data/main");
+//        Score = new BitmapFont(Gdx.files.internal("data/calibri.fnt"),
+                textureAtlas.findRegion("calibri"), false);
         Score.setColor(Color.CYAN);
         Score.getData().setScale(3);
 
@@ -174,9 +179,7 @@ public class Painter implements Screen {
             }
         }
 
-        Score.draw(batch,""+Superviser.getScore(),camera_top-100,520);
         batch.end();
-
 
         debugRenderer.begin(ShapeRenderer.ShapeType.Line);
         debugRenderer.setColor(new Color(1, 1, 1, 1));
@@ -196,6 +199,17 @@ public class Painter implements Screen {
 
         debugRenderer.end();
         /**/
+        camera.rotate(-90);
+        camera.update();
+        camera_top = (int) (camera.position.y + camera.viewportWidth/2);
+
+        batch.setProjectionMatrix(camera.combined);
+        batch.begin();
+        Score.draw(batch, "" + Superviser.getScore(), camera.position.x-300, camera_top-10);
+        batch.end();
+
+        camera.rotate(90);
+        camera.update();
     }
 
     @Override

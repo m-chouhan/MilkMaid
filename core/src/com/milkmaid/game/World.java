@@ -49,7 +49,12 @@ public class World {
     public int getNodeSize() { return NODE_SIZE/5;}
     public Vertex getLastTouched() { return LastTouched; }
 
-    void setLastTouched(Vertex last) { LastTouched = last;}
+    void setLastTouched(Vertex last) {
+
+        LastTouched = last;
+        for (HalfEdge h : LastTouched.getEdgeList())
+            h.getDst().changeState(Vertex.Status.Reachable);
+    }
     //NOT IN USE FOR NOW :)
     public void VertexUnTouched(Vertex vertex) {
 

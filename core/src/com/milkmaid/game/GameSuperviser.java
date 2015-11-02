@@ -81,6 +81,7 @@ public class GameSuperviser implements Screen {
             case NORMAL:
                 NormalWorld.setLastTouched(CurrentWorld.getLastTouched());
                 CurrentWorld = NormalWorld;
+                CurrentRenderer = NormalRenderer;
                 InputProcessor.Enable();
                 InputProcessor.setMyWorld(NormalWorld);
                 break;
@@ -89,6 +90,7 @@ public class GameSuperviser implements Screen {
                 InputProcessor.setMyWorld(SharperWorld);
                 SharperWorld.searchPath(NormalWorld.getLastTouched());
                 CurrentWorld = SharperWorld;
+                CurrentRenderer = NormalRenderer;
                 break;
             case STRONGER:
 
