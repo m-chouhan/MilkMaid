@@ -18,7 +18,7 @@ public class Vertex extends Vector2 {
     private ArrayList<HalfEdge> EdgeList = new ArrayList<HalfEdge>();
     private boolean explored = false;
     private Type VertexType = Type.Normal;
-    private final int weight = 100;
+    private final int weight = 10;
 
     public Vertex(int x,int y) {
 

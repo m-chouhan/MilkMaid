@@ -46,8 +46,8 @@ public class GameSuperviser implements Screen {
         CurrentWorld = NormalWorld;
 
         NormalRenderer = new Painter(VQ,this);
-        StrongerRenderer = new StrongerPainter(VQ,
-                ((SuperStrongerWorld)StrongerWorld).getPlayerPosition(),this);
+        StrongerRenderer = new StrongerPainter(VQ,((SuperStrongerWorld)StrongerWorld).getPlayerPosition(),
+                ((SuperStrongerWorld)StrongerWorld).getInitialPos(),this);
         CurrentRenderer = NormalRenderer;
     }
 

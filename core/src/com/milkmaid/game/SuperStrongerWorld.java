@@ -1,6 +1,5 @@
 package com.milkmaid.game;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -14,7 +13,10 @@ import java.util.Iterator;
 
 public class SuperStrongerWorld extends World implements InputProcessor {
 
+    private static final float MAX_VELOCITY = 20;
     private final String TAG = "STRONGERWORLD";
+    private final float AFFINITY_RANGE = 200;
+    private int Bottom = 0;
 
     enum State{SHOOTING,SHOT,ENDING};
     private State currentState = State.SHOOTING;
@@ -40,16 +42,19 @@ public class SuperStrongerWorld extends World implements InputProcessor {
 
     public void startGame(Vertex last_touched) {
 
-        //TODO: reset player position
+        currentState = State.SHOOTING;
         last_touched.changeState(Vertex.Status.Dead);
 
         Player.Position.set(last_touched);
+        Player.Velocity.set(0,0);
         InitialPos.set(last_touched);
+        Bottom = (int) (camera.position.x - camera.viewportWidth/2) - 32;
     }
 
     public boolean  IsPaused() { return IsPaused; }
 
     public Vector2 getPlayerPosition() { return Player.Position; }
+    public Vector2 getInitialPos() { return InitialPos; }
 
     //TODO: update player position
     @Override
@@ -59,19 +64,29 @@ public class SuperStrongerWorld extends World implements InputProcessor {
             case SHOOTING: return;
 
             case SHOT:
-                if( Player.Position.y < 32 || Player.Position.y > 450 )
-                    Player.Velocity.y = -Player.Velocity.y;
 
+                if( Player.Position.y < 32 ) {
+                    Player.Velocity.y = Math.abs(Player.Velocity.y);
+                    Player.Position.y = 32;
+                }
+                else if( Player.Position.y > 450 ) {
+                    Player.Velocity.y = -Math.abs(Player.Velocity.y);
+                    Player.Position.y = 450;
+                }
+                if( Player.Position.x < Bottom ) {
+
+                    Player.Velocity.x = Math.abs(Player.Velocity.x);
+                    Player.Position.x = Bottom;
+                }
                 Player.update();
-
                 int index = VQueue.SearchUpperBound((int)Player.Position.x);
 
-                while(index < VQueue.getSize() ) {
+                while(index < VQueue.getSize() && index >= 0 ) {
 
                     Vertex v = VQueue.getVertex(index);
                     Vector2 dist = new Vector2(Player.Position);
                     dist.sub(v);
-                    if(dist.len() < 100 && v.getCurrentState() != Vertex.Status.Reachable ) {
+                    if(dist.len() < AFFINITY_RANGE && v.getCurrentState() != Vertex.Status.Reachable ) {
 
                         v.changeState(Vertex.Status.Reachable);
                         Affinity.add(v);
@@ -86,11 +101,11 @@ public class SuperStrongerWorld extends World implements InputProcessor {
                     Vertex v= iterator.next();
                     Vector2 dir = new Vector2(Player.Position);
                     dir.sub(v);
-                    v.add(dir.x / 3, dir.y / 3);
+                    v.add(dir.x / 2, dir.y / 2);
 
                     dir.set(Player.Position.x-v.x,Player.Position.y-v.y);
 
-                    if(dir.len() < 50 ) {
+                    if(dir.len() < 30 ) {
                         v.changeState(Vertex.Status.Dead);
                         Superviser.updateScore(v.getWeight());
                         iterator.remove();
@@ -111,7 +126,7 @@ public class SuperStrongerWorld extends World implements InputProcessor {
 
                 Player.Velocity.x *= 0.99f;
                 Player.Velocity.y *= 0.99f;
-                if(Player.Velocity.len() < 5 ) {
+                if(Player.Velocity.len() < 4 ) {
 
                     currentState = State.ENDING;
                     MoveTo(getNearestVertex());
@@ -120,8 +135,11 @@ public class SuperStrongerWorld extends World implements InputProcessor {
 
             case ENDING:
                 Player.update();
-                if(LastTouched.dst(Player.Position) < 5 )
+                if(LastTouched.dst(Player.Position) < 5 ) {
                     Superviser.SwitchState(GameSuperviser.GameState.NORMAL);
+                    LastTouched.changeState(Vertex.Status.Touched);
+                    LastTouched.setVertexType(Vertex.Type.Stronger);
+                }
                 return;
         }
 
@@ -170,16 +188,20 @@ public class SuperStrongerWorld extends World implements InputProcessor {
 
         Vector3 touch3D = camera.unproject(new Vector3(x,y,0));
         Vector2 touchPos = new Vector2(touch3D.x,touch3D.y);
-        Gdx.app.log(TAG, "TouchPos " + touchPos.x + "|" + touchPos.y);
-        Gdx.app.log(TAG, "InitialPos " + InitialPos.x + "|" + InitialPos.y);
-
-        //touchPos.sub(InitialPos);
-        InitialPos.sub(touchPos);
+//        Gdx.app.log(TAG, "TouchPos " + touchPos.x + "|" + touchPos.y);
+//        Gdx.app.log(TAG, "InitialPos " + InitialPos.x + "|" + InitialPos.y);
+        Vector2 InitialVelocity = new Vector2(InitialPos.x - touchPos.x,InitialPos.y - touchPos.y);
+        InitialVelocity.scl(1/3);
         currentState = State.SHOT;
 
         player_selected = false;
         Player.Position.set(touchPos);
-        Player.Velocity.set(InitialPos.x/2,InitialPos.y/2);
+        Player.Velocity.set(InitialVelocity);
+        if(Player.Velocity.len() > MAX_VELOCITY) {
+
+            float X = Player.Velocity.len()/MAX_VELOCITY;
+            Player.Velocity.scl(1 / X);
+        }
         //TODO: SHOOT Player
 
         return true;
@@ -188,13 +210,22 @@ public class SuperStrongerWorld extends World implements InputProcessor {
     @Override
     public boolean touchDragged(int x, int y, int pointer) {
 
-        if(!player_selected || currentState == State.SHOT ) return true;
-
         Vector3 touch3D = camera.unproject(new Vector3(x,y,0));
         Vector2 touchPos = new Vector2(touch3D.x,touch3D.y);
+        if (touchPos.dst(Player.Position) < 50 )
+            player_selected = true;
+
+        if(!player_selected || currentState == State.SHOT ) return true;
+
         if(touchPos.y < 32  ) touchPos.y = 32;
         if(touchPos.y > 450 ) touchPos.y = 450;
-        Player.Position.set(touchPos);
+        touchPos.sub(InitialPos);
+        if(touchPos.len() > 150 ) {
+            float X = touchPos.len()/(150);
+            touchPos.scl(1/X);
+        }
+
+        Player.Position.set(InitialPos.x+touchPos.x,InitialPos.y+touchPos.y);
 
         return true;
     }

@@ -3,6 +3,7 @@ package com.milkmaid.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 
 /**
@@ -11,14 +12,16 @@ import com.badlogic.gdx.math.Vector2;
 
  public class StrongerPainter extends Painter {
 
-    private final Vector2 PlayerNode;
+    private final Vector2 PlayerNode,InitialPos;
     private Sprite PlayerSprite;
 
-    public StrongerPainter(VertexQueue VQ,Vector2 node,GameSuperviser superviser) {
+    public StrongerPainter(VertexQueue VQ,Vector2 node,Vector2 initialpos,GameSuperviser superviser) {
 
         super(VQ,superviser);
         //VQueue = VQ;
         PlayerNode = node;
+        InitialPos = initialpos;
+
         PlayerSprite = new Sprite(Regions[0][0]);
         //Superviser = superviser;
     }
@@ -54,13 +57,18 @@ import com.badlogic.gdx.math.Vector2;
         PlayerSprite.draw(batch);
         batch.end();
 
+        debugRenderer.begin(ShapeRenderer.ShapeType.Line);
+        debugRenderer.circle(InitialPos.x,InitialPos.y,50);
+        debugRenderer.circle(InitialPos.x,InitialPos.y,200);
+        debugRenderer.end();
+
         camera.rotate(-90);
         camera.update();
         camera_top = (int) (camera.position.y + camera.viewportWidth/2);
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
-        Score.draw(batch, "" + Superviser.getScore(), camera.position.x-300, camera_top-10);
+        Score.draw(batch, "" + Superviser.getScore(), camera.position.x - 300, camera_top - 10);
         batch.end();
 
         camera.rotate(90);

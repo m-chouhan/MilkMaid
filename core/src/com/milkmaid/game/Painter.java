@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
@@ -50,7 +49,7 @@ public class Painter implements Screen {
 //        Score = new BitmapFont(Gdx.files.internal("Calibri.fnt"),Gdx.files.internal("Calibri.png"),false);
 //        TextureAtlas textureAtlas = new TextureAtlas("data/main");
 //        Score = new BitmapFont(Gdx.files.internal("data/calibri.fnt"),
-                textureAtlas.findRegion("calibri"), false);
+//                textureAtlas.findRegion("calibri"), false);
         Score.setColor(Color.CYAN);
         Score.getData().setScale(3);
 
