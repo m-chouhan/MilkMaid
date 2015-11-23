@@ -71,6 +71,7 @@ public class Vertex extends Vector2 {
             if (EdgeList.get(i).getDst() == v) break;
         }
         if( i < EdgeList.size() ) EdgeList.remove(i);
+        if(EdgeList.size() == 0 ) currentState = Status.Dead;
     }
     public void Connect(Vertex v,int weight) {
 

@@ -64,8 +64,8 @@ public class VertexQueue {
             return;
         }
 
-        v.x = (getVertex(size - 1).x + (R.nextInt(5)+1)*40);
-        v.y = R.nextInt(6) * (80);
+        v.x = (getVertex(size - 1).x + (R.nextInt(5)+2)*40);
+        v.y = R.nextInt(4) * (120);
 
         if( size > 3) {
             Vector2 v1 = getVertex(size - 1) ,v2 = getVertex(size - 2) ,v3 = getVertex(size - 3);
@@ -100,13 +100,14 @@ public class VertexQueue {
 
             case 9:
             case 8:
+                    v.setVertexType(Vertex.Type.Sharper);
+                    break;
             case 7:
-                v.setVertexType(Vertex.Type.Stronger);
-                break;
-
+                    v.setVertexType(Vertex.Type.Stronger);
+                    break;
             default:
-                v.setVertexType(Vertex.Type.Normal);
-                break;
+                    v.setVertexType(Vertex.Type.Normal);
+                    break;
         }
     }
 
