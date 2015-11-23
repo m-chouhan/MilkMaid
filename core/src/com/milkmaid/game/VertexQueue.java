@@ -5,6 +5,8 @@ package com.milkmaid.game;
  * This is a custom Queue Class for recycling Vertices efficiently
  */
 
+import com.badlogic.gdx.math.Vector2;
+
 import java.util.EmptyStackException;
 import java.util.Random;
 
@@ -62,36 +64,32 @@ public class VertexQueue {
             return;
         }
 
-        int x = (int) (getVertex(size - 1).x + (R.nextInt(15)+5)*10);
-        int y = R.nextInt(12) * (40);
+        v.x = (getVertex(size - 1).x + (R.nextInt(5)+1)*40);
+        v.y = R.nextInt(6) * (80);
 
         if( size > 3) {
-            int y1 = 0,y2 = 0,y3 = 0;
+            Vector2 v1 = getVertex(size - 1) ,v2 = getVertex(size - 2) ,v3 = getVertex(size - 3);
             do {
-                y = R.nextInt(12) * (40);
-                y1 = (int) Math.abs(y - getVertex(size - 1).y);
-                y2 = (int) Math.abs(y - getVertex(size - 2).y);
-                y3 = (int) Math.abs(y - getVertex(size - 3).y);
+                v.x = (v1.x + (R.nextInt(5)+1)*40);
+                v.y = R.nextInt(6) * (80);
             }
-            while( y1 < 20 || y2 < 20 || y3 < 20);
+            while( v1.dst(v) < 100 || v2.dst(v) < 150 || v3.dst(v) < 200);
         }
-
-        v.x = x;v.y = y;
 
         int a = 0,b = 0;
 
-        if( size < 7) {
+        if (size < 7) {
             a = R.nextInt(size);
-            b = R.nextInt(size);b = a;
-        }
-        else {
-            a = size - (R.nextInt(3) + 1);
-            b = size - (R.nextInt(3) + 1);
+            b = R.nextInt(size);
+            b = a;
+        } else {
+            a = size - 1;//(R.nextInt(3) + 1);
+            b = size - 2;//(R.nextInt(3) + 1);
 
         }
 
-        v.Connect(getVertex(a),1);
-        if( a != b ) v.Connect(getVertex(b),1);
+        if( !Overlap(a,v) )v.Connect(getVertex(a),1);
+        if( a != b && !Overlap(b,v) ) v.Connect(getVertex(b),1);
 
         Array[(bottom + size) % max_size] = v;
         size++;
@@ -110,6 +108,22 @@ public class VertexQueue {
                 v.setVertexType(Vertex.Type.Normal);
                 break;
         }
+    }
+
+    /*Checks if two line overlap or not  */
+    private boolean Overlap(int a,Vertex v) {
+
+        Vertex ver = getVertex(a);
+        float slope = (v.y - ver.y) /(v.x-ver.x) ;
+        while(++a < size) {
+
+            Vertex v2 = getVertex(a);
+            float y = v2.y - ver.y;
+            float x = slope*(v2.x-ver.x);
+            float res = y - x;
+            if( Math.abs(res) < 60 ) return true;
+        }
+        return false;
     }
 
     public Vertex Pop() {

@@ -130,7 +130,7 @@ public class Painter implements Screen {
 
         Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        Gdx.gl.glLineWidth(5);
+        Gdx.gl.glLineWidth(10);
 
         batch.begin();
 

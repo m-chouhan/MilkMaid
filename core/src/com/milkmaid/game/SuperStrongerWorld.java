@@ -139,7 +139,6 @@ public class SuperStrongerWorld extends World implements InputProcessor {
                     LastTouched.changeState(Vertex.Status.Touched);
                     LastTouched.setVertexType(Vertex.Type.Stronger);
                 }
-                return;
         }
 
     }
@@ -191,18 +190,15 @@ public class SuperStrongerWorld extends World implements InputProcessor {
 
 //        Gdx.app.log(TAG, "TouchPos " + touchPos.x + "|" + touchPos.y);
 //        Gdx.app.log(TAG, "InitialPos " + InitialPos.x + "|" + InitialPos.y);
-        //InitialPos.sub(touchPos);
         currentState = State.SHOT;
 
         player_selected = false;
-        Player.Position.set(touchPos);
         Player.Velocity.set(InitialVelo);
         if(Player.Velocity.len() > MAX_VELOCITY) {
 
             float X = Player.Velocity.len()/MAX_VELOCITY;
             Player.Velocity.scl(1 / X);
         }
-        //TODO: SHOOT Player
 
         return true;
     }
@@ -219,8 +215,12 @@ public class SuperStrongerWorld extends World implements InputProcessor {
 
         if(touchPos.y < 32  ) touchPos.y = 32;
         if(touchPos.y > 450 ) touchPos.y = 450;
-        //Vector2 dist = new Vector2();
-        Player.Position.set(touchPos);
+        touchPos.sub(InitialPos);
+        if(touchPos.len() > 200 ) {
+            float X = 200/touchPos.len();
+            touchPos.scl(X);
+        }
+        Player.Position.set(touchPos.add(InitialPos));
 
         return true;
     }
