@@ -21,23 +21,14 @@ public class SuperStrongerWorld extends World implements InputProcessor {
     enum State{SHOOTING,SHOT,ENDING};
     private State currentState = State.SHOOTING;
 
-    private PlayerClass Player = new PlayerClass();
     private Vector2 InitialPos = new Vector2(),LaunchVelocity = new Vector2();
     private ArrayList<Vertex> Affinity = new ArrayList<Vertex>();
 
     private boolean IsPaused = true;
     private boolean player_selected = false;
-    private class PlayerClass {
 
-        Vector3 Position = new Vector3();
-        Vector3 Velocity = new Vector3();
-        void update() {
-            Position.add(Velocity);
-        }
-    };
-
-    public SuperStrongerWorld(VertexQueue vertexQueue, GameSuperviser superviser) {
-        super(vertexQueue, superviser);
+    public SuperStrongerWorld(VertexQueue vertexQueue, GameSuperviser superviser,Player p) {
+        super(vertexQueue, superviser,p);
     }
 
     public void startGame(Vertex last_touched) {
@@ -46,15 +37,14 @@ public class SuperStrongerWorld extends World implements InputProcessor {
         currentState = State.SHOOTING;
         last_touched.changeState(Vertex.Status.Dead);
 
-        Player.Position.set(last_touched.x,last_touched.y,0);
-        Player.Velocity.set(0,0,0);
+        crazyFrog.position.set(last_touched.x,last_touched.y,0);
+        crazyFrog.velocity.set(0,0,0);
         InitialPos.set(last_touched);
         Bottom = (int) (camera.position.x - camera.viewportWidth/2) - 32;
     }
 
     public boolean  IsPaused() { return IsPaused; }
 
-    public Vector3 getPlayerPosition() { return Player.Position; }
     public Vector2 getInitialPos() { return InitialPos; }
 
     //TODO: update player position
@@ -66,15 +56,11 @@ public class SuperStrongerWorld extends World implements InputProcessor {
 
             case SHOT:
 
-                if( Player.Position.y < 32 ) {
-                    Player.Velocity.y = Math.abs(Player.Velocity.y);
-                    Player.Position.y = 32;
-                }
-                else if( Player.Position.y > 450 ) {
-                    Player.Velocity.y = -Math.abs(Player.Velocity.y);
-                    Player.Position.y = 450;
-                }
-                if( Player.Position.x < Bottom ) {
+                if( crazyFrog.position.y < 32 ) crazyFrog.position.y = 32;
+
+                else if( crazyFrog.position.y > 450 ) crazyFrog.position.y = 450;
+
+                if( crazyFrog.position.x < Bottom ) {
 
                     Player.Velocity.x = Math.abs(Player.Velocity.x);
                     Player.Position.x = Bottom;

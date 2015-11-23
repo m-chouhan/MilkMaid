@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 
 /**
  * Created by maximus_prime on 13/10/15.
@@ -19,13 +21,11 @@ public class GameSuperviser implements Screen {
     private int Score = 0;
 
     private Painter NormalRenderer,CurrentRenderer,StrongerRenderer;
-
     private World NormalWorld , CurrentWorld;
     private SuperStrongerWorld StrongerWorld;
-
     private SuperSharperWorld SharperWorld;
-
     private InputHandler InputProcessor;
+    private Player crazyFrog;
 
     public GameSuperviser(int width,int height) {
 
@@ -33,7 +33,9 @@ public class GameSuperviser implements Screen {
         Height = height;
         VertexQueue VQ = new VertexQueue(25);
         InflateVertices(VQ);
+        Vector2 v = VQ.getVertex(0);
 
+        crazyFrog = new Player(new Vector3(v.x,v.y,0));
         DisplayCamera = new OrthographicCamera(Width,Height); //viewport dimensions
         DisplayCamera.position.set(DisplayCamera.viewportWidth / 2f,
                 WorldHeight / 2, 0);

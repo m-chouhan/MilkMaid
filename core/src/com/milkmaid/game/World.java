@@ -17,22 +17,22 @@ public class World {
 
     protected VertexQueue VQueue;
     protected boolean Game_Started = false;
-    protected OrthographicCamera camera;
 
+    protected final OrthographicCamera camera;
     protected final GameSuperviser Superviser;
+    protected final Player crazyFrog;
 
     public final int Height ; //Height of our world
     public final int ScreenWidth,ScreenHeight;
 
-    public World(VertexQueue vqueue,GameSuperviser superviser) {
+    public World(VertexQueue vqueue,GameSuperviser superviser,Player p) {
 
         Superviser = superviser;
         ScreenWidth = Superviser.getWidth(); ScreenHeight = Superviser.getHeight();
         Height = superviser.getWorldHeight();
         VQueue = vqueue;
-
         camera = superviser.getDisplayCamera();
-
+        crazyFrog = p;
     }
 
     private int generateProbability(double val) {
