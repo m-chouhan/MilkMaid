@@ -46,10 +46,6 @@ public class Painter implements Screen {
         camera = superviser.getDisplayCamera();
 
         Score = new BitmapFont();
-//        Score = new BitmapFont(Gdx.files.internal("Calibri.fnt"),Gdx.files.internal("Calibri.png"),false);
-//        TextureAtlas textureAtlas = new TextureAtlas("data/main");
-//        Score = new BitmapFont(Gdx.files.internal("data/calibri.fnt"),
-//                textureAtlas.findRegion("calibri"), false);
         Score.setColor(Color.CYAN);
         Score.getData().setScale(3);
 
@@ -107,21 +103,11 @@ public class Painter implements Screen {
     public void render(float v) {
 
         NormalPaint();
-        /*
-        switch(PaintingMode){
-
-            case NORMAL:
-            case SHARPER:
-                NormalPaint();
-                break;
-                break;
-        }
-        */
     }
 
     private void NormalPaint() {
 
-        Vertex.Reset();//reset the Isexplored boolean value
+        Vertex.Reset();//reset the Is explored boolean value
 
         int camera_top = (int) (camera.position.x + camera.viewportWidth/2); //for optimization
 
@@ -130,12 +116,31 @@ public class Painter implements Screen {
 
         Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        Gdx.gl.glLineWidth(10);
+        Gdx.gl.glLineWidth(30);
 
         batch.begin();
-
         for(Sprite s: BackgroundSprites) s.draw(batch); //render background
+        batch.end();
 
+        debugRenderer.begin(ShapeRenderer.ShapeType.Line);
+        debugRenderer.setColor(new Color(0.0f, 0.5f, 1f, 1));
+        Rectangle r = BackgroundSprites[0].getBoundingRectangle();
+
+        for(int i = 0;i<VQueue.getSize();++i) {
+            Vertex vertex = VQueue.getVertex(i);
+
+            if(vertex.x > camera_top) break;//since vertex is not visible
+
+            for(HalfEdge he:vertex.getEdgeList()) {
+
+                //if( !he.getDst().IsExplored() || he.getDst().getCurrentState() == Vertex.Status.Invisible)
+                    debugRenderer.line(vertex,he.getDst());
+            }
+            //vertex.MarkExplored();
+        }
+        debugRenderer.end();
+
+        batch.begin();
         for(int i = 0;i<VQueue.getSize();++i) {
 
             Vertex vertex = VQueue.getVertex(i);
@@ -180,23 +185,6 @@ public class Painter implements Screen {
 
         batch.end();
 
-        debugRenderer.begin(ShapeRenderer.ShapeType.Line);
-        debugRenderer.setColor(new Color(1, 1, 1, 1));
-        Rectangle r = BackgroundSprites[0].getBoundingRectangle();
-        for(int i = 0;i<VQueue.getSize();++i) {
-            Vertex vertex = VQueue.getVertex(i);
-
-            if(vertex.x > camera_top) break;//since vertex is not visible
-
-            for(HalfEdge he:vertex.getEdgeList()) {
-
-                if( !he.getDst().IsExplored() || he.getDst().getCurrentState() == Vertex.Status.Invisible)
-                    debugRenderer.line(vertex,he.getDst());
-            }
-            vertex.MarkExplored();
-        }
-
-        debugRenderer.end();
         /**/
         camera.rotate(-90);
         camera.update();

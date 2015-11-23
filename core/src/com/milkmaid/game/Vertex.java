@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 /**
  * Created by maximus_prime on 3/10/15.
+ * MODEL CLASS
  */
 public class Vertex extends Vector2 {
 
@@ -18,7 +19,8 @@ public class Vertex extends Vector2 {
     private ArrayList<HalfEdge> EdgeList = new ArrayList<HalfEdge>();
     private boolean explored = false;
     private Type VertexType = Type.Normal;
-    private final int weight = 10;
+    private final int WEIGHT = 5; //weight of the vertex;
+    private final int SIZE = 50; //DIMENSIONS of the vertex
 
     public Vertex(int x,int y) {
 
@@ -28,10 +30,6 @@ public class Vertex extends Vector2 {
 
     public static void Reset() { RESET = !RESET; } //optimized reset function for painting
 
-    public Type getVertexType() { return VertexType;}
-    public void setVertexType(Type t) { VertexType = t; }
-    public int getWeight() { return weight; }
-    public Status getCurrentState() { return currentState; }
 
     public void changeState(Status s) {
 
@@ -60,6 +58,7 @@ public class Vertex extends Vector2 {
         }
         currentState = s;
     }
+
     public ArrayList<HalfEdge> getEdgeList() { return EdgeList; }
 
     public boolean IsExplored() { return explored != RESET;}
@@ -72,7 +71,6 @@ public class Vertex extends Vector2 {
             if (EdgeList.get(i).getDst() == v) break;
         }
         if( i < EdgeList.size() ) EdgeList.remove(i);
-
     }
     public void Connect(Vertex v,int weight) {
 
@@ -92,5 +90,11 @@ public class Vertex extends Vector2 {
         //TODO: check for redundancy in edgelist
         EdgeList.add(h);
     }
+
+    public int getSize() { return SIZE; }
+    public Type getVertexType() { return VertexType;}
+    public void setVertexType(Type t) { VertexType = t; }
+    public int getWeight() { return WEIGHT; }
+    public Status getCurrentState() { return currentState; }
 
 }

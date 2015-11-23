@@ -23,7 +23,6 @@ public class World {
 
     public final int Height ; //Height of our world
     public final int ScreenWidth,ScreenHeight;
-    public final int NODE_SIZE = 120;
 
     public World(VertexQueue vqueue,GameSuperviser superviser) {
 
@@ -46,7 +45,6 @@ public class World {
 
     //public Screen getPainterScreen() { return myPainter; }
     public OrthographicCamera getCamera() { return camera; }
-    public int getNodeSize() { return NODE_SIZE/5;}
     public Vertex getLastTouched() { return LastTouched; }
 
     void setLastTouched(Vertex last) {

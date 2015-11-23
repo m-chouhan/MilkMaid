@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 
 /**
  * Created by maximus_prime on 1/11/15.
@@ -12,18 +13,16 @@ import com.badlogic.gdx.math.Vector2;
 
  public class StrongerPainter extends Painter {
 
-    private final Vector2 PlayerNode,InitialPos;
+    private final Vector3 PlayerNode;
+    private final Vector2 InitialPos;
     private Sprite PlayerSprite;
 
-    public StrongerPainter(VertexQueue VQ,Vector2 node,Vector2 initialpos,GameSuperviser superviser) {
+    public StrongerPainter(VertexQueue VQ,Vector3 node,Vector2 initialpos,GameSuperviser superviser) {
 
         super(VQ,superviser);
-        //VQueue = VQ;
         PlayerNode = node;
         InitialPos = initialpos;
-
         PlayerSprite = new Sprite(Regions[0][0]);
-        //Superviser = superviser;
     }
 
     @Override
@@ -52,6 +51,7 @@ import com.badlogic.gdx.math.Vector2;
 
         }
 
+        PlayerSprite.setScale(PlayerNode.z);
         PlayerSprite.setPosition(PlayerNode.x - Regions[0][0].getRegionWidth() / 2,
                 PlayerNode.y - Regions[0][0].getRegionHeight() / 2);
         PlayerSprite.draw(batch);

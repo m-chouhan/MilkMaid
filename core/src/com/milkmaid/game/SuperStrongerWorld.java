@@ -15,22 +15,22 @@ public class SuperStrongerWorld extends World implements InputProcessor {
 
     private static final float MAX_VELOCITY = 20;
     private final String TAG = "STRONGERWORLD";
-    private final float AFFINITY_RANGE = 200;
+    private float AFFINITY_RANGE = 200;
     private int Bottom = 0;
 
     enum State{SHOOTING,SHOT,ENDING};
     private State currentState = State.SHOOTING;
 
     private PlayerClass Player = new PlayerClass();
-    private Vector2 InitialPos = new Vector2();
+    private Vector2 InitialPos = new Vector2(),LaunchVelocity = new Vector2();
     private ArrayList<Vertex> Affinity = new ArrayList<Vertex>();
 
     private boolean IsPaused = true;
     private boolean player_selected = false;
     private class PlayerClass {
 
-        Vector2 Position = new Vector2();
-        Vector2 Velocity = new Vector2();
+        Vector3 Position = new Vector3();
+        Vector3 Velocity = new Vector3();
         void update() {
             Position.add(Velocity);
         }
@@ -42,18 +42,19 @@ public class SuperStrongerWorld extends World implements InputProcessor {
 
     public void startGame(Vertex last_touched) {
 
+        AFFINITY_RANGE = 200;
         currentState = State.SHOOTING;
         last_touched.changeState(Vertex.Status.Dead);
 
-        Player.Position.set(last_touched);
-        Player.Velocity.set(0,0);
+        Player.Position.set(last_touched.x,last_touched.y,0);
+        Player.Velocity.set(0,0,0);
         InitialPos.set(last_touched);
         Bottom = (int) (camera.position.x - camera.viewportWidth/2) - 32;
     }
 
     public boolean  IsPaused() { return IsPaused; }
 
-    public Vector2 getPlayerPosition() { return Player.Position; }
+    public Vector3 getPlayerPosition() { return Player.Position; }
     public Vector2 getInitialPos() { return InitialPos; }
 
     //TODO: update player position
@@ -84,7 +85,7 @@ public class SuperStrongerWorld extends World implements InputProcessor {
                 while(index < VQueue.getSize() && index >= 0 ) {
 
                     Vertex v = VQueue.getVertex(index);
-                    Vector2 dist = new Vector2(Player.Position);
+                    Vector2 dist = new Vector2(Player.Position.x,Player.Position.y);
                     dist.sub(v);
                     if(dist.len() < AFFINITY_RANGE && v.getCurrentState() != Vertex.Status.Reachable ) {
 
@@ -98,7 +99,7 @@ public class SuperStrongerWorld extends World implements InputProcessor {
                 for(Iterator<Vertex> iterator = Affinity.iterator();iterator.hasNext();) {
 
                     Vertex v= iterator.next();
-                    Vector2 dir = new Vector2(Player.Position);
+                    Vector2 dir = new Vector2(Player.Position.x,Player.Position.y);
                     dir.sub(v);
                     v.add(dir.x / 2, dir.y / 2);
 
@@ -122,19 +123,24 @@ public class SuperStrongerWorld extends World implements InputProcessor {
                 if(VQueue.getVertex(0).x <camera_bottom)
                     VQueue.Push(VQueue.Pop());
 
-
+                /*Update Player */
                 Player.Velocity.x *= 0.99f;
                 Player.Velocity.y *= 0.99f;
-                if(Player.Velocity.len() < 4 ) {
+                Player.Velocity.z *= 0.95f;
+                if(Player.Velocity.len() < 6 ) {
 
                     currentState = State.ENDING;
                     MoveTo(getNearestVertex());
                 }
-                return;
+
+                AFFINITY_RANGE++;
+                break;
 
             case ENDING:
                 Player.update();
-                if(LastTouched.dst(Player.Position) < 5 ) {
+                camera.translate(Player.Velocity.x, 0);
+                camera.update();
+                if(LastTouched.dst(Player.Position.x,Player.Position.y) < 5 ) {
                     Superviser.SwitchState(GameSuperviser.GameState.NORMAL);
                     LastTouched.changeState(Vertex.Status.Touched);
                     LastTouched.setVertexType(Vertex.Type.Stronger);
@@ -145,10 +151,13 @@ public class SuperStrongerWorld extends World implements InputProcessor {
 
     private void MoveTo(Vertex v) {
 
-        Vector2 velo = new Vector2(v.x - Player.Position.x,v.y - Player.Position.y);
-        Player.Velocity.set(velo.x/10,velo.y/10);
+        Vector3 velo = new Vector3(v.x - Player.Position.x,v.y - Player.Position.y,
+                                    1 - Player.Position.z);
+        velo.scl(0.05f);
+        Player.Velocity.set(velo);
         LastTouched = v;
     }
+
     private Vertex getNearestVertex() {
         int i = VQueue.SearchUpperBound((int)Player.Position.x);
         Vertex v = VQueue.getVertex(i);
@@ -158,9 +167,9 @@ public class SuperStrongerWorld extends World implements InputProcessor {
             v = VQueue.getVertex(i);
             if(v.getCurrentState() != Vertex.Status.Dead) break;
         }
-
         return v;
     }
+
     @Override
     public void VertexTouched(Vertex vertex) {
 
@@ -173,7 +182,7 @@ public class SuperStrongerWorld extends World implements InputProcessor {
 
         Vector3 touch3D = camera.unproject(new Vector3(x, y, 0));
         Vector2 touchPos = new Vector2(touch3D.x,touch3D.y);
-        if (touchPos.dst(Player.Position) < 50 )
+        if (touchPos.dst(Player.Position.x,Player.Position.y) < 50 )
             player_selected = true;
 
         return true;
@@ -188,16 +197,19 @@ public class SuperStrongerWorld extends World implements InputProcessor {
         Vector2 touchPos = new Vector2(touch3D.x,touch3D.y);
         Vector2 InitialVelo = new Vector2(InitialPos.x - touchPos.x,InitialPos.y - touchPos.y);
 
-//        Gdx.app.log(TAG, "TouchPos " + touchPos.x + "|" + touchPos.y);
-//        Gdx.app.log(TAG, "InitialPos " + InitialPos.x + "|" + InitialPos.y);
+        //Gdx.app.log(TAG, "TouchPos " + touchPos.x + "|" + touchPos.y);
+        //Gdx.app.log(TAG, "InitialPos " + InitialPos.x + "|" + InitialPos.y);
         currentState = State.SHOT;
 
         player_selected = false;
-        Player.Velocity.set(InitialVelo);
+        Player.Velocity.set(InitialVelo.x,InitialVelo.y,1f);
+        LaunchVelocity.set(InitialVelo);
+
         if(Player.Velocity.len() > MAX_VELOCITY) {
 
             float X = Player.Velocity.len()/MAX_VELOCITY;
             Player.Velocity.scl(1 / X);
+            LaunchVelocity.set(Player.Velocity.x,Player.Velocity.y);
         }
 
         return true;
@@ -208,7 +220,7 @@ public class SuperStrongerWorld extends World implements InputProcessor {
 
         Vector3 touch3D = camera.unproject(new Vector3(x,y,0));
         Vector2 touchPos = new Vector2(touch3D.x,touch3D.y);
-        if (touchPos.dst(Player.Position) < 50 )
+        if (touchPos.dst(Player.Position.x,Player.Position.y) < 50 )
             player_selected = true;
 
         if(!player_selected || currentState == State.SHOT ) return true;
@@ -220,8 +232,8 @@ public class SuperStrongerWorld extends World implements InputProcessor {
             float X = 200/touchPos.len();
             touchPos.scl(X);
         }
-        Player.Position.set(touchPos.add(InitialPos));
-
+        touchPos.add(InitialPos);
+        Player.Position.set(touchPos.x,touchPos.y,1);
         return true;
     }
 
@@ -239,8 +251,6 @@ public class SuperStrongerWorld extends World implements InputProcessor {
     public boolean keyTyped(char c) {
         return false;
     }
-
-
 
     @Override
     public boolean mouseMoved(int i, int i1) {

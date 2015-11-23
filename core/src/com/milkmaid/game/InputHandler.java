@@ -15,14 +15,14 @@ public class InputHandler implements InputProcessor {
     private OrthographicCamera camera;
     private World myWorld;
     private VertexQueue VQueue;
-    private final int Node_Size,TOUCH_DIM = 10;
+    private final int TOUCH_DIM = 10;
+    //TOUCH_DIM = dimension of touch pointer
     private boolean Enabled = true;
 
     public InputHandler(World world) {
         myWorld = world;
         camera = world.getCamera();
         VQueue = world.getVQueue();
-        Node_Size = world.getNodeSize();
     }
 
     public void Enable() { Enabled = true;  }
@@ -49,21 +49,22 @@ public class InputHandler implements InputProcessor {
     public boolean touchDown(int x, int y, int pointer, int button) {
 
         if( !Enabled ) return false;
+
         Vector3 touch3D = camera.unproject(new Vector3(x,y,0));
         Vector2 touchPos = new Vector2(touch3D.x,touch3D.y);
 
         //Gdx.app.log(TAG, "TouchDown " + touchPos.x + "|" + touchPos.y);
-        int index = VQueue.SearchUpperBound((int) touchPos.x - TOUCH_DIM - Node_Size);
+        int index = VQueue.SearchUpperBound((int) touchPos.x - TOUCH_DIM);
             Vertex v = VQueue.getVertex(++index);
             do {
-
-                if ( v.dst(touchPos) < Node_Size + TOUCH_DIM ) {
+                if ( v.dst(touchPos) < v.getSize() + TOUCH_DIM ) {
                     //Gdx.app.log(TAG, "Collision at" + index + "[" + v.x + "|" + v.y + "]");
                     myWorld.VertexTouched(v);
                     return true;
                 }
                 v = VQueue.getVertex(++index);
             }while (v.x < touchPos.x + 10);
+
         return true;
     }
 
@@ -76,11 +77,11 @@ public class InputHandler implements InputProcessor {
         Vector2 touchPos = new Vector2(touch3D.x,touch3D.y);
 
         //Gdx.app.log(TAG, "TouchDown " + touchPos.x + "|" + touchPos.y);
-        int index = VQueue.SearchUpperBound((int) touchPos.x - TOUCH_DIM - Node_Size);
+        int index = VQueue.SearchUpperBound((int) touchPos.x - TOUCH_DIM);
         Vertex v = VQueue.getVertex(++index);
         do {
 
-            if ( v.dst(touchPos) < Node_Size + TOUCH_DIM ) {
+            if ( v.dst(touchPos) < v.getSize() + TOUCH_DIM ) {
                 //Gdx.app.log(TAG, "Collision at" + index + "[" + v.x + "|" + v.y + "]");
                 myWorld.VertexUnTouched(v);
                 return true;
@@ -96,8 +97,6 @@ public class InputHandler implements InputProcessor {
         if( !Enabled ) return false;
 
         touchDown(x,y,pointer,pointer);
-        //Vector3 v = camera.unproject(new Vector3(x,y,0));
-        //Gdx.app.log(TAG,"TouchDragged");
 
         return true;
     }

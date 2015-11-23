@@ -42,12 +42,12 @@ public class GameSuperviser implements Screen {
 
         NormalWorld = new World(VQ,this);
         SharperWorld = new SuperSharperWorld(VQ,this);
-        StrongerWorld = new SuperStrongerWorld(VQ,this);
+        SuperStrongerWorld s = new SuperStrongerWorld(VQ,this);
+        StrongerWorld = s;
         CurrentWorld = NormalWorld;
 
         NormalRenderer = new Painter(VQ,this);
-        StrongerRenderer = new StrongerPainter(VQ,((SuperStrongerWorld)StrongerWorld).getPlayerPosition(),
-                ((SuperStrongerWorld)StrongerWorld).getInitialPos(),this);
+        StrongerRenderer = new StrongerPainter(VQ,s.getPlayerPosition(),s.getInitialPos(),this);
         CurrentRenderer = NormalRenderer;
     }
 

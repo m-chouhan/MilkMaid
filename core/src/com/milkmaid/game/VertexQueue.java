@@ -73,7 +73,7 @@ public class VertexQueue {
                 v.x = (v1.x + (R.nextInt(5)+1)*40);
                 v.y = R.nextInt(6) * (80);
             }
-            while( v1.dst(v) < 100 || v2.dst(v) < 150 || v3.dst(v) < 200);
+            while( v1.dst(v) < 200 || v2.dst(v) < 200 || v3.dst(v) < 200);
         }
 
         int a = 0,b = 0;
@@ -88,7 +88,7 @@ public class VertexQueue {
 
         }
 
-        if( !Overlap(a,v) )v.Connect(getVertex(a),1);
+        v.Connect(getVertex(a),1);
         if( a != b && !Overlap(b,v) ) v.Connect(getVertex(b),1);
 
         Array[(bottom + size) % max_size] = v;
