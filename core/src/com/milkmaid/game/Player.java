@@ -52,8 +52,6 @@ public class Player {
 
     public void render( SpriteBatch spriteBatch) {
 
-        update();
-
         stateTime += Gdx.graphics.getDeltaTime();
         currentFrame = walkAnimation.getKeyFrame(stateTime, running );
         spriteBatch.begin();
@@ -90,7 +88,7 @@ public class Player {
         running = true;
     }
 
-    private void update() {
+    public void update() {
         position.add(velocity);
     }
 

@@ -17,8 +17,8 @@ public class SuperSharperWorld extends World {
     private float counter = timeStep;
     private Vertex Top;
 
-    public SuperSharperWorld(VertexQueue vqueue,GameSuperviser superviser) {
-        super(vqueue,superviser);
+    public SuperSharperWorld(VertexQueue vqueue,GameSuperviser superviser,Player p) {
+        super(vqueue,superviser,p);
     }
 
     private void MoveTo(float xpos ) {

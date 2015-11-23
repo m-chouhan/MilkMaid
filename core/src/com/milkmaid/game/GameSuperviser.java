@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector3;
 
 /**
  * Created by maximus_prime on 13/10/15.
+ * Maintains and supervises game states transition
  */
 public class GameSuperviser implements Screen {
 
@@ -42,14 +43,14 @@ public class GameSuperviser implements Screen {
         DisplayCamera.rotate(180);
         DisplayCamera.update();
 
-        NormalWorld = new World(VQ,this);
-        SharperWorld = new SuperSharperWorld(VQ,this);
-        SuperStrongerWorld s = new SuperStrongerWorld(VQ,this);
+        NormalWorld = new World(VQ,this,crazyFrog);
+        SharperWorld = new SuperSharperWorld(VQ,this,crazyFrog);
+        SuperStrongerWorld s = new SuperStrongerWorld(VQ,this,crazyFrog);
         StrongerWorld = s;
         CurrentWorld = NormalWorld;
 
         NormalRenderer = new Painter(VQ,this);
-        StrongerRenderer = new StrongerPainter(VQ,s.getPlayerPosition(),s.getInitialPos(),this);
+        StrongerRenderer = new StrongerPainter(VQ,crazyFrog.position,s.getInitialPos(),this);
         CurrentRenderer = NormalRenderer;
     }
 
@@ -101,7 +102,6 @@ public class GameSuperviser implements Screen {
                 CurrentRenderer = StrongerRenderer;
                 InputProcessor.Disable();
                 //InputProcessor.setMyWorld(StrongerWorld);
-
                 break;
 
         }

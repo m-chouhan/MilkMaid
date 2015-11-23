@@ -20,7 +20,7 @@ public class World {
 
     protected final OrthographicCamera camera;
     protected final GameSuperviser Superviser;
-    protected final Player crazyFrog;
+    protected final Player player;
 
     public final int Height ; //Height of our world
     public final int ScreenWidth,ScreenHeight;
@@ -32,7 +32,7 @@ public class World {
         Height = superviser.getWorldHeight();
         VQueue = vqueue;
         camera = superviser.getDisplayCamera();
-        crazyFrog = p;
+        player = p;
     }
 
     private int generateProbability(double val) {
