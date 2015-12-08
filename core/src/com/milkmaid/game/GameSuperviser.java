@@ -49,8 +49,9 @@ public class GameSuperviser implements Screen {
         StrongerWorld = s;
         CurrentWorld = NormalWorld;
 
-        NormalRenderer = new Painter(VQ,this);
-        StrongerRenderer = new StrongerPainter(VQ,crazyFrog.position,s.getInitialPos(),this);
+        NormalRenderer = new Painter(VQ,this,crazyFrog);
+        StrongerRenderer = new StrongerPainter(VQ,crazyFrog.position,
+                    s.getInitialPos(),this,crazyFrog);
         CurrentRenderer = NormalRenderer;
     }
 

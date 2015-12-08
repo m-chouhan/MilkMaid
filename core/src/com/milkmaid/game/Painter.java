@@ -35,16 +35,16 @@ public class Painter implements Screen {
     protected SpriteBatch batch;
     protected BitmapFont Score;
     protected GameSuperviser Superviser;
+    private final Player crazyFrog;
 
-    Painter(VertexQueue VQ,GameSuperviser superviser) {
+    Painter(VertexQueue VQ,GameSuperviser superviser,Player crazyF) {
 
         Superviser = superviser;
-
         VQueue = VQ;
         Width = Superviser.getWidth();
         Height = Superviser.getHeight();
         camera = superviser.getDisplayCamera();
-
+        crazyFrog = crazyF;
         Score = new BitmapFont();
         Score.setColor(Color.CYAN);
         Score.getData().setScale(3);
@@ -184,7 +184,7 @@ public class Painter implements Screen {
         }
 
         batch.end();
-
+        crazyFrog.render(batch);
         /**/
         camera.rotate(-90);
         camera.update();

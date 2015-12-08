@@ -18,6 +18,7 @@ public class Player {
 
     private static final int FRAME_COLS = 7;
     private static final int FRAME_ROWS = 1;
+    private final int FRAME_WIDTH,FRAME_HEIGHT;
 
     Animation walkAnimation;
     Texture walkSheet;
@@ -27,7 +28,7 @@ public class Player {
 
     float stateTime;//maintains game time
 
-    Vector3 position = new Vector3(),velocity = new Vector3();
+    final Vector3 position,velocity = new Vector3();
     GameSuperviser.GameState CurrentGameState = GameSuperviser.GameState.NORMAL;
     boolean running = false;
 
@@ -35,10 +36,13 @@ public class Player {
 
     public Player(Vector3 pos) {
 
+        position = pos;
         TargetQueue = new LinkedList<Vector3>();
         walkSheet = new Texture(Gdx.files.internal("frog.png"));
-        TextureRegion[][] tmp = TextureRegion.split(walkSheet, walkSheet.getWidth()/FRAME_COLS,
-                                walkSheet.getHeight()/FRAME_ROWS);
+        FRAME_WIDTH = walkSheet.getWidth()/FRAME_COLS;
+        FRAME_HEIGHT = walkSheet.getHeight()/FRAME_ROWS;
+
+        TextureRegion[][] tmp = TextureRegion.split(walkSheet,FRAME_WIDTH,FRAME_HEIGHT);
         walkFrames = new TextureRegion[FRAME_COLS * FRAME_ROWS];
         int index = 0;
         for (int i = 0; i < FRAME_ROWS; i++) {
@@ -46,27 +50,26 @@ public class Player {
                 walkFrames[index++] = tmp[i][j];
             }
         }
-        walkAnimation = new Animation(0.125f, walkFrames);
+        walkAnimation = new Animation(0.12f, walkFrames);
         stateTime = 0f;
     }
 
     public void render( SpriteBatch spriteBatch) {
 
         stateTime += Gdx.graphics.getDeltaTime();
-        currentFrame = walkAnimation.getKeyFrame(stateTime, running );
+        currentFrame = walkAnimation.getKeyFrame(stateTime, true );
         spriteBatch.begin();
-        spriteBatch.draw(currentFrame, position.x, position.y);
+        spriteBatch.draw(currentFrame,position.x-FRAME_WIDTH/2, position.y-FRAME_HEIGHT/2);
         spriteBatch.end();
-
-        if( walkAnimation.isAnimationFinished(stateTime)) {
-
-            if(TargetQueue.size() > 0 ) {
-                Move_TO(TargetQueue.removeFirst());
-                return;
-            }
-            running = false;
-            velocity.set(0,0,0);
-        }
+//        if( walkAnimation.isAnimationFinished(stateTime)) {
+//
+//            if(TargetQueue.size() > 0 ) {
+//                Move_TO(TargetQueue.removeFirst());
+//                return;
+//            }
+//            running = false;
+//            velocity.set(0,0,0);
+//        }
     }
 
     public void Move_TO(Vector3 pos) {
@@ -77,18 +80,23 @@ public class Player {
     public void Move_TO(float x,float y) {
 
         //if the animation is already running, the event should be processed later
-        if( running ) {
-            TargetQueue.addLast(new Vector3(x, y, 0));
-            return;
-        }
+//        if( running ) {
+//            TargetQueue.addLast(new Vector3(x, y, 0));
+//            return;
+//        }
+        TargetQueue.addLast(new Vector3(x, y, 0));
 
         Vector2 delta = new Vector2(x- position.x,y - position.y);
-        delta.scl(0.1f);
+        delta.scl(0.2f);
         velocity.set(delta.x, delta.y, 0);
         running = true;
     }
 
     public void update() {
+        if( TargetQueue.size() > 0 && TargetQueue.getFirst().dst(position) < 10 ) {
+            velocity.set(0,0,0);
+            TargetQueue.removeFirst();
+        }
         position.add(velocity);
     }
 

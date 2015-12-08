@@ -111,6 +111,7 @@ public class World {
                 for (HalfEdge h : LastTouched.getEdgeList())
                     h.getDst().changeState(Vertex.Status.Reachable);
                 Superviser.updateScore(LastTouched.getWeight());
+                player.Move_TO(LastTouched.x,LastTouched.y);
                 return;
             }
         }
@@ -122,6 +123,7 @@ public class World {
             camera.translate(Speed, 0);
             camera.update();
             Speed += 0.005f;
+            player.update();
         }
 
         int camera_bottom = (int) (camera.position.x - camera.viewportWidth/2);

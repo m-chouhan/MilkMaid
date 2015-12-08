@@ -17,9 +17,10 @@ import com.badlogic.gdx.math.Vector3;
     private final Vector2 InitialPos;
     private Sprite PlayerSprite;
 
-    public StrongerPainter(VertexQueue VQ,Vector3 node,Vector2 initialpos,GameSuperviser superviser) {
+    public StrongerPainter(VertexQueue VQ,Vector3 node,Vector2 initialpos,
+                           GameSuperviser superviser,Player crazyF) {
 
-        super(VQ,superviser);
+        super(VQ,superviser,crazyF);
         PlayerNode = node;
         InitialPos = initialpos;
         PlayerSprite = new Sprite(Regions[0][0]);
