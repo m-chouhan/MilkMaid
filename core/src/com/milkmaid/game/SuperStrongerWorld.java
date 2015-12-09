@@ -49,6 +49,7 @@ public class SuperStrongerWorld extends MotherController implements InputProcess
     }
 
     /*start game from given vertex */
+    @Override
     public void startGame(Vertex last_touched) {
 
         AFFINITY_RANGE = 200;
@@ -186,7 +187,7 @@ public class SuperStrongerWorld extends MotherController implements InputProcess
 
         Vector3 touch3D = camera.unproject(new Vector3(x, y, 0));
         Vector2 touchPos = new Vector2(touch3D.x,touch3D.y);
-        if (touchPos.dst(player.position.x,player.position.y) < 50 )
+        if (touchPos.dst(player.position.x, player.position.y) < 50 )
             player_selected = true;
 
         return true;
@@ -206,7 +207,7 @@ public class SuperStrongerWorld extends MotherController implements InputProcess
         currentState = State.SHOT;
 
         player_selected = false;
-        player.velocity.set(InitialVelo.x,InitialVelo.y,1f);
+        player.velocity.set(InitialVelo.x, InitialVelo.y, 1f);
         LaunchVelocity.set(InitialVelo);
 
         if(player.velocity.len() > MAX_VELOCITY) {

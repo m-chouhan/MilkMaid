@@ -71,34 +71,35 @@ public class GameSuperviser implements Screen {
     public void SwitchState(GameState g) {
 
         CurrentGameState = g;
-        CurrentRenderer.setPaintingMode(g);
+        Vertex last_touched = CurrentWorld.getLastTouched();
 
         switch (CurrentGameState) {
             case NORMAL:
                 CurrentWorld = NormalWorld;
                 //Start game from the last touched vertex
-                CurrentWorld.startGame(CurrentWorld.getLastTouched());
+//                CurrentWorld.startGame(CurrentWorld.getLastTouched());
                 CurrentRenderer = NormalRenderer;
                 InputProcessor.Enable();
                 InputProcessor.setMyWorld(NormalWorld);
                 break;
             case SHARPER:
-
-                SharperWorld.startGame(CurrentWorld.getLastTouched());
+//                SharperWorld.startGame(CurrentWorld.getLastTouched());
                 CurrentWorld = SharperWorld;
                 CurrentRenderer = NormalRenderer;
                 InputProcessor.Enable();
                 InputProcessor.setMyWorld(SharperWorld);
                 break;
             case STRONGER:
-                StrongerWorld.startGame(CurrentWorld.getLastTouched());
+//                StrongerWorld.startGame(CurrentWorld.getLastTouched());
                 CurrentWorld = StrongerWorld;
                 CurrentRenderer = StrongerRenderer;
                 InputProcessor.Disable();
-                //InputProcessor.setMyWorld(StrongerWorld);
                 break;
 
         }
+
+        CurrentWorld.startGame(last_touched);
+        CurrentRenderer.setPaintingMode(g);
     }
     @Override
     public void show() {
