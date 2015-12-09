@@ -43,7 +43,6 @@ public class World {
 
     public VertexQueue getVQueue() {return VQueue; }
 
-    //public Screen getPainterScreen() { return myPainter; }
     public OrthographicCamera getCamera() { return camera; }
     public Vertex getLastTouched() { return LastTouched; }
 

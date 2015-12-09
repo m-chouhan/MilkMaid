@@ -24,7 +24,7 @@ public class Player {
     Texture walkSheet;
     TextureRegion[] walkFrames;
     TextureRegion currentFrame;
-    LinkedList<Vector3> TargetQueue;
+    LinkedList<Vector3> EventQueue;
 
     float stateTime;//maintains game time
 
@@ -37,7 +37,7 @@ public class Player {
     public Player(Vector3 pos) {
 
         position = pos;
-        TargetQueue = new LinkedList<Vector3>();
+        EventQueue = new LinkedList<Vector3>();
         walkSheet = new Texture(Gdx.files.internal("frog.png"));
         FRAME_WIDTH = walkSheet.getWidth()/FRAME_COLS;
         FRAME_HEIGHT = walkSheet.getHeight()/FRAME_ROWS;
@@ -52,19 +52,20 @@ public class Player {
         }
         walkAnimation = new Animation(0.12f, walkFrames);
         stateTime = 0f;
+
+        currentFrame = walkAnimation.getKeyFrame(stateTime, true );
     }
 
     public void render( SpriteBatch spriteBatch) {
 
         stateTime += Gdx.graphics.getDeltaTime();
-        currentFrame = walkAnimation.getKeyFrame(stateTime, true );
         spriteBatch.begin();
         spriteBatch.draw(currentFrame,position.x-FRAME_WIDTH/2, position.y-FRAME_HEIGHT/2);
         spriteBatch.end();
 //        if( walkAnimation.isAnimationFinished(stateTime)) {
 //
-//            if(TargetQueue.size() > 0 ) {
-//                Move_TO(TargetQueue.removeFirst());
+//            if(EventQueue.size() > 0 ) {
+//                Move_TO(EventQueue.removeFirst());
 //                return;
 //            }
 //            running = false;
@@ -80,11 +81,12 @@ public class Player {
     public void Move_TO(float x,float y) {
 
         //if the animation is already running, the event should be processed later
-//        if( running ) {
-//            TargetQueue.addLast(new Vector3(x, y, 0));
-//            return;
-//        }
-        TargetQueue.addLast(new Vector3(x, y, 0));
+        if( EventQueue.size() > 0 ) {
+            EventQueue.addLast(new Vector3(x, y, 0));
+            return;
+        }
+
+        EventQueue.addLast(new Vector3(x, y, 0));
 
         Vector2 delta = new Vector2(x- position.x,y - position.y);
         delta.scl(0.2f);
@@ -93,10 +95,21 @@ public class Player {
     }
 
     public void update() {
-        if( TargetQueue.size() > 0 && TargetQueue.getFirst().dst(position) < 10 ) {
-            velocity.set(0,0,0);
-            TargetQueue.removeFirst();
+
+        if( EventQueue.size() == 0 ) return;
+
+        if( EventQueue.getFirst().dst(position) < 10 ) {
+            velocity.set(0, 0, 0);
+            EventQueue.removeFirst();
+            if(EventQueue.size() > 0) {
+                Vector3 v = EventQueue.getFirst();
+                Vector2 delta = new Vector2(v.x- position.x,v.y - position.y);
+                delta.scl(0.2f);
+                velocity.set(delta.x, delta.y, 0);
+                running = true;
+            }
         }
+
         position.add(velocity);
     }
 
