@@ -9,9 +9,11 @@ import java.util.Iterator;
 
 /**
  * Created by maximus_prime on 1/11/15.
+ * Controls FLYING Game state
+ * Also handles touch gestures
  */
 
-public class SuperStrongerWorld extends World implements InputProcessor {
+public class SuperStrongerWorld extends MotherController implements InputProcessor {
 
     private static final float MAX_VELOCITY = 20;
     private final String TAG = "STRONGERWORLD";
@@ -19,18 +21,34 @@ public class SuperStrongerWorld extends World implements InputProcessor {
     private int Bottom = 0;
 
     enum State{SHOOTING,SHOT,ENDING};
+    /*3 possible states, initial = shooting
+                         middle = SHOT i.e flying
+                         final = ENDING, i.e object is coming back to ground for switching
+    */
     private State currentState = State.SHOOTING;
 
-    private Vector2 InitialPos = new Vector2(),LaunchVelocity = new Vector2();
+    private Vector2 InitialPos ,LaunchVelocity;
     private ArrayList<Vertex> Affinity = new ArrayList<Vertex>();
 
-    private boolean IsPaused = true;
     private boolean player_selected = false;
 
     public SuperStrongerWorld(VertexQueue vertexQueue, GameSuperviser superviser,Player p) {
         super(vertexQueue, superviser,p);
+        InitialPos = new Vector2();
+        LaunchVelocity = new Vector2();
     }
 
+    @Override
+    public void setLastTouched(Vertex last) {
+
+    }
+
+    @Override
+    public void VertexUnTouched(Vertex vertex) {
+
+    }
+
+    /*start game from given vertex */
     public void startGame(Vertex last_touched) {
 
         AFFINITY_RANGE = 200;
@@ -42,10 +60,6 @@ public class SuperStrongerWorld extends World implements InputProcessor {
         InitialPos.set(last_touched);
         Bottom = (int) (camera.position.x - camera.viewportWidth/2) - 32;
     }
-
-    public boolean  IsPaused() { return IsPaused; }
-
-    public Vector2 getInitialPos() { return InitialPos; }
 
     //TODO: update player position
     @Override
@@ -226,6 +240,8 @@ public class SuperStrongerWorld extends World implements InputProcessor {
         player.position.set(touchPos.x,touchPos.y,1);
         return true;
     }
+
+    public Vector2 getInitialPos() { return InitialPos; }
 
     @Override
     public boolean keyDown(int i) {

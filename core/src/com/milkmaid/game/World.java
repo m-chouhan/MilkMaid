@@ -8,10 +8,11 @@ package com.milkmaid.game;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 
 
-public class World {
+public class World extends MotherController {
 
     private final String TAG = "WORLD CLASS";
 
+    /*
     protected float Speed = 0.0f;
     protected Vertex LastTouched = null;
 
@@ -40,33 +41,12 @@ public class World {
         if( prob <= 1) return 1;
         else return 0;
     }
-
-    public VertexQueue getVQueue() {return VQueue; }
-
-    public OrthographicCamera getCamera() { return camera; }
-    public Vertex getLastTouched() { return LastTouched; }
-
-    void setLastTouched(Vertex last) {
-
-        LastTouched = last;
-        for (HalfEdge h : LastTouched.getEdgeList())
-            h.getDst().changeState(Vertex.Status.Reachable);
-    }
-    //NOT IN USE FOR NOW :)
-    public void VertexUnTouched(Vertex vertex) {
-
+    */
+    public World(VertexQueue vqueue,GameSuperviser superviser,Player p) {
+        super(vqueue,superviser,p);
     }
 
-    public void startGame() {
-        Game_Started = true;
-    }
-
-    public void setSpeed(float f) {
-        Speed = f;
-    }
-
-    public float getSpeed() { return Speed;}
-
+    @Override
     public void VertexTouched(Vertex vertex) {
 
         if(LastTouched == vertex ) return;//eliminate repeated events
@@ -79,7 +59,7 @@ public class World {
               for(HalfEdge h:LastTouched.getEdgeList())
                   h.getDst().changeState(Vertex.Status.Reachable);
 
-              startGame();
+              startGame(LastTouched);
               setSpeed(1.0f);
           }
           return;
@@ -99,9 +79,11 @@ public class World {
                 switch (LastTouched.getVertexType()){
 
                     case Sharper:
+                            Game_Started = false;
                             Superviser.SwitchState(GameSuperviser.GameState.SHARPER);
                             break;
                     case Stronger:
+                            Game_Started = false;
                             Superviser.SwitchState(GameSuperviser.GameState.STRONGER);
                             break;
                     case Normal:
@@ -116,6 +98,7 @@ public class World {
         }
     }
 
+    @Override
     public void update() {
 
         if(Game_Started) {
@@ -130,6 +113,28 @@ public class World {
 
             VQueue.Push(VQueue.Pop());
         }
+
+    }
+
+    @Override
+    public void startGame(Vertex v) {
+        Game_Started = true;
+        setLastTouched(v);
+    }
+
+    public VertexQueue getVQueue() {return VQueue; }
+    public OrthographicCamera getCamera() { return camera; }
+    public Vertex getLastTouched() { return LastTouched; }
+
+    @Override
+    public void setLastTouched(Vertex last) {
+
+        LastTouched = last;
+        for (HalfEdge h : LastTouched.getEdgeList())
+            h.getDst().changeState(Vertex.Status.Reachable);
+    }
+    //NOT IN USE FOR NOW :)
+    public void VertexUnTouched(Vertex vertex) {
 
     }
 

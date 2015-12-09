@@ -106,6 +106,11 @@ public class SuperSharperWorld extends World {
     }
 
     @Override
+    public void startGame(Vertex v) {
+        Game_Started = true;
+        searchPath(v);
+    }
+    @Override
     public void VertexTouched(Vertex v) {
 
     }

@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Vector3;
 /**
  * Created by maximus_prime on 13/10/15.
  * Maintains and supervises game states transition
+ * Also dispatches all the events based on GameState
  */
 public class GameSuperviser implements Screen {
 
@@ -22,7 +23,8 @@ public class GameSuperviser implements Screen {
     private int Score = 0;
 
     private Painter NormalRenderer,CurrentRenderer,StrongerRenderer;
-    private World NormalWorld , CurrentWorld;
+    private World NormalWorld ;
+    private MotherController CurrentWorld;
     private SuperStrongerWorld StrongerWorld;
     private SuperSharperWorld SharperWorld;
     private InputHandler InputProcessor;
@@ -55,11 +57,6 @@ public class GameSuperviser implements Screen {
         CurrentRenderer = NormalRenderer;
     }
 
-    public int getWidth() { return Width; }
-    public int getHeight() { return Height; }
-    public int getWorldHeight() { return WorldHeight; }
-
-    public OrthographicCamera getDisplayCamera() { return DisplayCamera; }
 
     private void InflateVertices(VertexQueue VQueue) {
 
@@ -71,33 +68,29 @@ public class GameSuperviser implements Screen {
         }
     }
 
-    public void updateScore(int weight) {
-        Score += weight;
-    }
-
-    public int getScore() { return Score; }
-
     public void SwitchState(GameState g) {
+
         CurrentGameState = g;
         CurrentRenderer.setPaintingMode(g);
 
         switch (CurrentGameState) {
             case NORMAL:
-                NormalWorld.setLastTouched(CurrentWorld.getLastTouched());
                 CurrentWorld = NormalWorld;
+                //Start game from the last touched vertex
+                CurrentWorld.startGame(CurrentWorld.getLastTouched());
                 CurrentRenderer = NormalRenderer;
                 InputProcessor.Enable();
                 InputProcessor.setMyWorld(NormalWorld);
                 break;
             case SHARPER:
-                InputProcessor.Enable();
-                InputProcessor.setMyWorld(SharperWorld);
-                SharperWorld.searchPath(NormalWorld.getLastTouched());
+
+                SharperWorld.startGame(CurrentWorld.getLastTouched());
                 CurrentWorld = SharperWorld;
                 CurrentRenderer = NormalRenderer;
+                InputProcessor.Enable();
+                InputProcessor.setMyWorld(SharperWorld);
                 break;
             case STRONGER:
-
                 StrongerWorld.startGame(CurrentWorld.getLastTouched());
                 CurrentWorld = StrongerWorld;
                 CurrentRenderer = StrongerRenderer;
@@ -126,6 +119,16 @@ public class GameSuperviser implements Screen {
         CurrentWorld.update();
         CurrentRenderer.updateBackground(CurrentWorld.getSpeed() / 2);
         CurrentRenderer.render(v);
+    }
+
+    public int getWidth() { return Width; }
+    public int getHeight() { return Height; }
+    public int getWorldHeight() { return WorldHeight; }
+    public OrthographicCamera getDisplayCamera() { return DisplayCamera; }
+    public int getScore() { return Score; }
+
+    public void updateScore(int weight) {
+        Score += weight;
     }
 
     @Override
