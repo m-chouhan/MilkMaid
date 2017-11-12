@@ -184,7 +184,7 @@ public class Painter implements Screen {
         }
 
         batch.end();
-        crazyFrog.render(batch);
+        // crazyFrog.render(batch);
         /**/
         camera.rotate(-90);
         camera.update();

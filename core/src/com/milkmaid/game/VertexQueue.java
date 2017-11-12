@@ -16,12 +16,24 @@ public class VertexQueue {
     private int bottom,size;
     private Random R = new Random();
     private final int max_size;
-    public VertexQueue(int size) {
+
+    private void InflateVertices(int WorldHeight) {
+
+        int x = 100,y = WorldHeight/2;
+        Push(new Vertex(x, y));
+
+        for(int i = 1 ;i<getMax_size();++i) {
+            Push(new Vertex(0,0));
+        }
+    }
+
+    public VertexQueue(int size,int WorldHeight) {
 
         bottom = 0;this.size = 0;
 
         max_size = size;
         Array = new Vertex[size];
+        InflateVertices(WorldHeight);
     }
 
     public int getSize() { return size; }

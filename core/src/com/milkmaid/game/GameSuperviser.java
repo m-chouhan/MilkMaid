@@ -34,8 +34,7 @@ public class GameSuperviser implements Screen {
 
         Width = width;
         Height = height;
-        VertexQueue VQ = new VertexQueue(25);
-        InflateVertices(VQ);
+        VertexQueue VQ = new VertexQueue(25,WorldHeight);
         Vector2 v = VQ.getVertex(0);
 
         crazyFrog = new Player(new Vector3(v.x,v.y,0));
@@ -55,17 +54,6 @@ public class GameSuperviser implements Screen {
         StrongerRenderer = new StrongerPainter(VQ,crazyFrog.position,
                     s.getInitialPos(),this,crazyFrog);
         CurrentRenderer = NormalRenderer;
-    }
-
-
-    private void InflateVertices(VertexQueue VQueue) {
-
-        int x = 100,y = WorldHeight/2;
-        VQueue.Push(new Vertex(x, y));
-
-        for(int i = 1 ;i<VQueue.getMax_size();++i) {
-            VQueue.Push(new Vertex(0,0));
-        }
     }
 
     public void SwitchState(GameState g) {
