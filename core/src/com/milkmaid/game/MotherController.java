@@ -46,7 +46,7 @@ public abstract class MotherController {
 
     //used during switching game states for concurrency
     public abstract void setLastTouched(Vertex last);
-    //NOT IN USE FOR NOW :)
+
     public abstract void VertexUnTouched(Vertex vertex);
     //Action to be taken when a vertex is touched
     public abstract void VertexTouched(Vertex vertex);

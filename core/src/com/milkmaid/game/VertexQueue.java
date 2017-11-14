@@ -3,6 +3,7 @@ package com.milkmaid.game;
 /**
  * Created by maximus_prime on 3/10/15.
  * This is a custom Queue Class for recycling Vertices efficiently
+ * Also handles the pushing and popping of elements and graph generation logic
  */
 
 import com.badlogic.gdx.math.Vector2;
@@ -22,28 +23,29 @@ public class VertexQueue {
         int x = 100,y = WorldHeight/2;
         Push(new Vertex(x, y));
 
-        for(int i = 1 ;i<getMax_size();++i) {
+        for(int i = 1 ;i < max_size;++i) {
             Push(new Vertex(0,0));
         }
     }
 
+    /**
+     * @param size = num of vertices you want in your queue
+     * @param WorldHeight = 'width' of game
+     */
     public VertexQueue(int size,int WorldHeight) {
 
         bottom = 0;this.size = 0;
-
         max_size = size;
         Array = new Vertex[size];
         InflateVertices(WorldHeight);
     }
 
     public int getSize() { return size; }
-    public int getMax_size() { return max_size; }
 
     public Vertex getVertex(int i) {
         if( i < size && i>= 0) return Array[ (bottom + i) % max_size ];
         throw new ArrayIndexOutOfBoundsException();
     }
-
 
     //search for max value < x and return the index for iterating over it
     public int SearchUpperBound(int x) {
@@ -66,14 +68,15 @@ public class VertexQueue {
         }
         return -1;
     }
-    public void Push(Vertex v) {
 
-        if(size >= max_size) return;
+    public boolean Push(Vertex v) {
+
+        if(size >= max_size) return false;
 
         if( size == 0 ) {
             Array[bottom] = v;
             size++;
-            return;
+            return true;
         }
 
         v.x = (getVertex(size - 1).x + (R.nextInt(5)+2)*40);
@@ -100,27 +103,29 @@ public class VertexQueue {
 
         }
 
-        v.Connect(getVertex(a),1);
-        if( a != b && !Overlap(b,v) ) v.Connect(getVertex(b),1);
+        v.Connect(getVertex(a));
+        if( a != b && !Overlap(b,v) ) v.Connect(getVertex(b));
 
         Array[(bottom + size) % max_size] = v;
         size++;
 
         v.changeState(Vertex.Status.Invisible);
+        v.setVertexType(Vertex.Type.Normal);
+        return true;
         //TODO: Add case for superpower Taller :/
-        switch ((int)(Math.random()*30) ) {
-
-            case 9:
-            case 8:
-                    v.setVertexType(Vertex.Type.Sharper);
-                    break;
-            case 7:
-                    v.setVertexType(Vertex.Type.Stronger);
-                    break;
-            default:
-                    v.setVertexType(Vertex.Type.Normal);
-                    break;
-        }
+//        switch ((int)(Math.random()*30) ) {
+//
+//            case 9:
+//            case 8:
+//                    v.setVertexType(Vertex.Type.Sharper);
+//                    break;
+//            case 7:
+//                    v.setVertexType(Vertex.Type.Stronger);
+//                    break;
+//            default:
+//                    v.setVertexType(Vertex.Type.Normal);
+//                    break;
+//        }
     }
 
     /*Checks if two line overlap or not  */

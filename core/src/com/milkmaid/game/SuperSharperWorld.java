@@ -39,16 +39,16 @@ public class SuperSharperWorld extends World {
                 return;
             }
 
-            for (HalfEdge h : LastTouched.getEdgeList())
-                h.getDst().changeState(Vertex.Status.UnReachable);
+            for (Vertex vertex : LastTouched.getEdgeList())
+                vertex.changeState(Vertex.Status.UnReachable);
 
             LastTouched.changeState(Vertex.Status.Dead);
 
             LastTouched = Stack.removeFirst();
 
             LastTouched.changeState(Vertex.Status.Touched);
-            for (HalfEdge h : LastTouched.getEdgeList())
-                h.getDst().changeState(Vertex.Status.Reachable);
+            for (Vertex vertex: LastTouched.getEdgeList())
+                vertex.changeState(Vertex.Status.Reachable);
 
             MoveTo(LastTouched.x);
             Superviser.updateScore(LastTouched.getWeight());
@@ -65,7 +65,7 @@ public class SuperSharperWorld extends World {
             VQueue.Push(v);
             //Do this only limited times to ensure correctness
             if(correction_counter > 0) {
-                v.Connect(Top, v.getWeight());
+                v.Connect(Top);
                 correction_counter--;
             }
         }
@@ -79,8 +79,8 @@ public class SuperSharperWorld extends World {
         correction_counter = 2;
         Top = VQueue.getVertex(VQueue.getSize() -1);
         LastTouched = v;
-        for(HalfEdge e: v.getEdgeList()) {
-            if (Greedy_DFS(e.getDst(), Top, Stack)) {
+        for(Vertex e: v.getEdgeList()) {
+            if (Greedy_DFS(e, Top, Stack)) {
                 Gdx.app.log(TAG, "Reachable :)");
                 return;
             }
@@ -97,8 +97,8 @@ public class SuperSharperWorld extends World {
         if( stack.indexOf(v) != -1 || v.getCurrentState() == Vertex.Status.Touched ) return false;
 
         stack.addLast(v);
-        for( HalfEdge e: v.getEdgeList()) {
-            if(Greedy_DFS(e.getDst(),top,stack)) return true;
+        for( Vertex e: v.getEdgeList()) {
+            if(Greedy_DFS(e,top,stack)) return true;
         }
 
         stack.removeLast();

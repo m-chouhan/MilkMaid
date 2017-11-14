@@ -56,8 +56,8 @@ public class World extends MotherController {
           if( vertex == VQueue.getVertex(0)) {
               LastTouched = vertex;
               LastTouched.changeState(Vertex.Status.Touched);
-              for(HalfEdge h:LastTouched.getEdgeList())
-                  h.getDst().changeState(Vertex.Status.Reachable);
+              for(Vertex ver:LastTouched.getEdgeList())
+                  ver.changeState(Vertex.Status.Reachable);
 
               startGame(LastTouched);
               setSpeed(1.0f);
@@ -65,12 +65,12 @@ public class World extends MotherController {
           return;
         }
 
-        for( HalfEdge he:LastTouched.getEdgeList() ) {
+        for( Vertex he:LastTouched.getEdgeList() ) {
 
-            if(he.getDst() == vertex) {
+            if(he == vertex) {
 
-                for (HalfEdge h : LastTouched.getEdgeList())
-                    h.getDst().changeState(Vertex.Status.UnReachable);
+                for (Vertex h : LastTouched.getEdgeList())
+                    h.changeState(Vertex.Status.UnReachable);
 
                 LastTouched.changeState(Vertex.Status.Dead);
 
@@ -89,8 +89,8 @@ public class World extends MotherController {
                     case Normal:
                     case Bonus:
                 }
-                for (HalfEdge h : LastTouched.getEdgeList())
-                    h.getDst().changeState(Vertex.Status.Reachable);
+                for (Vertex ver : LastTouched.getEdgeList())
+                    ver.changeState(Vertex.Status.Reachable);
                 Superviser.updateScore(LastTouched.getWeight());
                 player.Move_TO(LastTouched.x,LastTouched.y);
                 return;
@@ -110,7 +110,6 @@ public class World extends MotherController {
 
         int camera_bottom = (int) (camera.position.x - camera.viewportWidth/2);
         if(VQueue.getVertex(0).x <camera_bottom) {
-
             VQueue.Push(VQueue.Pop());
         }
 
@@ -130,8 +129,8 @@ public class World extends MotherController {
     public void setLastTouched(Vertex last) {
 
         LastTouched = last;
-        for (HalfEdge h : LastTouched.getEdgeList())
-            h.getDst().changeState(Vertex.Status.Reachable);
+        for (Vertex ver : LastTouched.getEdgeList())
+            ver.changeState(Vertex.Status.Reachable);
     }
     //NOT IN USE FOR NOW :)
     public void VertexUnTouched(Vertex vertex) {

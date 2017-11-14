@@ -1,8 +1,10 @@
 package com.milkmaid.game;
 
 import com.badlogic.gdx.math.Vector2;
+import com.sun.org.apache.xml.internal.serializer.ElemDesc;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Created by maximus_prime on 3/10/15.
@@ -16,7 +18,7 @@ public class Vertex extends Vector2 {
     private static boolean RESET = false;
 
     private Status currentState = Status.Visible;
-    private ArrayList<HalfEdge> EdgeList = new ArrayList<HalfEdge>();
+    private ArrayList<Vertex> EdgeList = new ArrayList<Vertex>();
     private boolean explored = false;
     private Type VertexType = Type.Normal;
     private final int WEIGHT = 5; //weight of the vertex;
@@ -39,9 +41,9 @@ public class Vertex extends Vector2 {
             case Touched:
                     break;
             case Dead:
-                    for(HalfEdge he:EdgeList) {
-                        he.getDst().changeState(Status.UnReachable);
-                        he.getDst().Disconnect(this);
+                    for(Vertex v:EdgeList) {
+                        v.changeState(Status.Visible);
+                        v.Disconnect(this);
                     }
                     EdgeList.clear();
                     break;
@@ -59,37 +61,26 @@ public class Vertex extends Vector2 {
         currentState = s;
     }
 
-    public ArrayList<HalfEdge> getEdgeList() { return EdgeList; }
-
-    public boolean IsExplored() { return explored != RESET;}
-
-    public void MarkExplored() { explored = !RESET; }
+    public ArrayList<Vertex> getEdgeList() { return EdgeList; }
 
     public void Disconnect(Vertex v) {
-        int i = 0;
-        for(;i<EdgeList.size();++i) {
-            if (EdgeList.get(i).getDst() == v) break;
+
+        for(Iterator<Vertex> it = EdgeList.iterator(); it.hasNext(); ) {
+            Vertex vertex = it.next();
+            if (vertex == v) it.remove();
         }
-        if( i < EdgeList.size() ) EdgeList.remove(i);
+
         if(EdgeList.size() == 0 ) currentState = Status.Dead;
     }
-    public void Connect(Vertex v,int weight) {
+    public void Connect(Vertex v) {
 
         //ignores duplicate edges
-        for(HalfEdge e: EdgeList) {
-            if(e.getDst() == v) return;
+        for(Vertex vertex: EdgeList) {
+            if(vertex == v) return;
         }
 
-        HalfEdge H1 = new HalfEdge(this,v,weight);
-        HalfEdge H2 = new HalfEdge(v,this,weight);
-
-        addEdge(H1);
-        v.addEdge(H2);
-    }
-
-    private void addEdge(HalfEdge h) {
-        //TODO: check for redundancy in edgelist
-        EdgeList.add(h);
+        EdgeList.add(v);
+        v.EdgeList.add(this);
     }
 
     public int getSize() { return SIZE; }

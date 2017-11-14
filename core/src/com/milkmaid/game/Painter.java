@@ -131,10 +131,10 @@ public class Painter implements Screen {
 
             if(vertex.x > camera_top) break;//since vertex is not visible
 
-            for(HalfEdge he:vertex.getEdgeList()) {
+            for(Vertex e:vertex.getEdgeList()) {
 
                 //if( !he.getDst().IsExplored() || he.getDst().getCurrentState() == Vertex.Status.Invisible)
-                    debugRenderer.line(vertex,he.getDst());
+                    debugRenderer.line(vertex,e);
             }
             //vertex.MarkExplored();
         }
