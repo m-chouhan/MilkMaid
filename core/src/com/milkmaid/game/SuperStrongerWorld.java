@@ -32,8 +32,8 @@ public class SuperStrongerWorld extends MotherController implements InputProcess
 
     private boolean player_selected = false;
 
-    public SuperStrongerWorld(VertexQueue vertexQueue, GameSuperviser superviser,Player p) {
-        super(vertexQueue, superviser,p);
+    public SuperStrongerWorld(GameSuperviser superviser,Player p) {
+        super(superviser,p);
         InitialPos = new Vector2();
         LaunchVelocity = new Vector2();
     }
@@ -146,7 +146,7 @@ public class SuperStrongerWorld extends MotherController implements InputProcess
                 camera.translate(player.velocity.x, 0);
                 camera.update();
                 if(LastTouched.dst(player.position.x,player.position.y) < 5 ) {
-                    Superviser.SwitchState(GameSuperviser.GameState.NORMAL);
+                    Superviser.SwitchState(Model.GameState.NORMAL);
                     LastTouched.changeState(Vertex.Status.Touched);
                     LastTouched.setVertexType(Vertex.Type.Stronger);
                 }

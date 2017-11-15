@@ -1,6 +1,7 @@
 package com.milkmaid.game;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g3d.*;
 
 /**
  * Created by maximus_prime on 9/12/15.
@@ -22,27 +23,17 @@ public abstract class MotherController {
     protected final GameSuperviser Superviser;
     protected final Player player;
 
-    public final int WorldHeight ; //Height of our world
     public final int ScreenWidth,ScreenHeight;
 
-    public MotherController(VertexQueue vqueue,GameSuperviser superviser,Player p) {
+    public MotherController(GameSuperviser superviser,Player p) {
 
         Superviser = superviser;
         ScreenWidth = Superviser.getWidth();
         ScreenHeight = Superviser.getHeight();
-        WorldHeight = superviser.getWorldHeight();
-        VQueue = vqueue;
+        VQueue = Model.VQueue;
         camera = superviser.getDisplayCamera();
         player = p;
     }
-
-    //returns 0/1 according to some probability of an event given as  val
-    private int generateProbability(double val) {
-        double prob = Math.random()/val;
-        if( prob <= 1) return 1;
-        else return 0;
-    }
-
 
     //used during switching game states for concurrency
     public abstract void setLastTouched(Vertex last);

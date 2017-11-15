@@ -82,7 +82,8 @@ public class VertexQueue {
         v.x = (getVertex(size - 1).x + (R.nextInt(5)+2)*40);
         v.y = R.nextInt(4) * (120);
 
-        if( size > 3) {
+        // set the location of next node at some minimum distance from other nodes
+        if(size > 3) {
             Vector2 v1 = getVertex(size - 1) ,v2 = getVertex(size - 2) ,v3 = getVertex(size - 3);
             do {
                 v.x = (v1.x + (R.nextInt(5)+1)*40);
@@ -100,7 +101,6 @@ public class VertexQueue {
         } else {
             a = size - 1;//(R.nextInt(3) + 1);
             b = size - 2;//(R.nextInt(3) + 1);
-
         }
 
         v.Connect(getVertex(a));
@@ -142,6 +142,11 @@ public class VertexQueue {
             if( Math.abs(res) < 60 ) return true;
         }
         return false;
+    }
+
+    public void RecycleStartVertex() {
+        Vertex v = Pop();
+        Push(v);
     }
 
     public Vertex Pop() {

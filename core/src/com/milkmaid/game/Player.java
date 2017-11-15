@@ -29,7 +29,7 @@ public class Player {
     float stateTime;//maintains game time
 
     final Vector3 position,velocity = new Vector3();
-    GameSuperviser.GameState CurrentGameState = GameSuperviser.GameState.NORMAL;
+    Model.GameState CurrentGameState = Model.GameState.NORMAL;
     boolean running = false;
 
     /* You should provide starting position to the player*/
@@ -113,7 +113,7 @@ public class Player {
         position.add(velocity);
     }
 
-    public void ChangeMode(GameSuperviser.GameState state) {
+    public void ChangeMode(Model.GameState state) {
 
         CurrentGameState = state;
         //TODO: State transitions

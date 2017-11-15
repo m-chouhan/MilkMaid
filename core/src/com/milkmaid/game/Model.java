@@ -10,4 +10,6 @@ public class Model {
 
     static final int WorldHeight= 480;
     static VertexQueue VQueue = new VertexQueue(25,WorldHeight);
+    public enum GameState {NORMAL,STRONGER,SHARPER}
+
 }

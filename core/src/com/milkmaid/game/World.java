@@ -12,38 +12,8 @@ public class World extends MotherController {
 
     private final String TAG = "WORLD CLASS";
 
-    /*
-    protected float Speed = 0.0f;
-    protected Vertex LastTouched = null;
-
-    protected VertexQueue VQueue;
-    protected boolean Game_Started = false;
-
-    protected final OrthographicCamera camera;
-    protected final GameSuperviser Superviser;
-    protected final Player player;
-
-    public final int Height ; //Height of our world
-    public final int ScreenWidth,ScreenHeight;
-
-    public World(VertexQueue vqueue,GameSuperviser superviser,Player p) {
-
-        Superviser = superviser;
-        ScreenWidth = Superviser.getWidth(); ScreenHeight = Superviser.getHeight();
-        Height = superviser.getWorldHeight();
-        VQueue = vqueue;
-        camera = superviser.getDisplayCamera();
-        player = p;
-    }
-
-    private int generateProbability(double val) {
-        double prob = Math.random()/val;
-        if( prob <= 1) return 1;
-        else return 0;
-    }
-    */
-    public World(VertexQueue vqueue,GameSuperviser superviser,Player p) {
-        super(vqueue,superviser,p);
+    public World(GameSuperviser superviser,Player p) {
+        super(superviser,p);
     }
 
     @Override
@@ -80,11 +50,11 @@ public class World extends MotherController {
 
                     case Sharper:
                             Game_Started = false;
-                            Superviser.SwitchState(GameSuperviser.GameState.SHARPER);
+                            Superviser.SwitchState(Model.GameState.SHARPER);
                             break;
                     case Stronger:
                             Game_Started = false;
-                            Superviser.SwitchState(GameSuperviser.GameState.STRONGER);
+                            Superviser.SwitchState(Model.GameState.STRONGER);
                             break;
                     case Normal:
                     case Bonus:
@@ -92,7 +62,7 @@ public class World extends MotherController {
                 for (Vertex ver : LastTouched.getEdgeList())
                     ver.changeState(Vertex.Status.Reachable);
                 Superviser.updateScore(LastTouched.getWeight());
-                player.Move_TO(LastTouched.x,LastTouched.y);
+                // player.Move_TO(LastTouched.x,LastTouched.y);
                 return;
             }
         }
@@ -105,7 +75,7 @@ public class World extends MotherController {
             camera.translate(Speed, 0);
             camera.update();
             Speed += 0.005f;
-            player.update();
+            // player.update();
         }
 
         int camera_bottom = (int) (camera.position.x - camera.viewportWidth/2);

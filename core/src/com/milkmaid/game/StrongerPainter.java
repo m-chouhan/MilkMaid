@@ -17,10 +17,10 @@ import com.badlogic.gdx.math.Vector3;
     private final Vector2 InitialPos;
     private Sprite PlayerSprite;
 
-    public StrongerPainter(VertexQueue VQ,Vector3 node,Vector2 initialpos,
+    public StrongerPainter(Vector3 node,Vector2 initialpos,
                            GameSuperviser superviser,Player crazyF) {
 
-        super(VQ,superviser,crazyF);
+        super(superviser,crazyF);
         PlayerNode = node;
         InitialPos = initialpos;
         PlayerSprite = new Sprite(Regions[0][0]);
@@ -41,9 +41,9 @@ import com.badlogic.gdx.math.Vector3;
 
         for(Sprite s: BackgroundSprites) s.draw(batch); //render background
 
-        for(int i = 0;i<VQueue.getSize();++i) {
+        for(int i = 0;i<Model.VQueue.getSize();++i) {
 
-            Vertex vertex = VQueue.getVertex(i);
+            Vertex vertex = Model.VQueue.getVertex(i);
             if(vertex.x > camera_top ) break; //optimizaton
             if( vertex.getCurrentState() == Vertex.Status.Dead ) continue;
 

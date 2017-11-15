@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 
@@ -20,11 +21,10 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class Painter implements Screen {
 
-    private GameSuperviser.GameState PaintingMode = GameSuperviser.GameState.NORMAL;
+    private Model.GameState PaintingMode = Model.GameState.NORMAL;
 
     private final String TAG = "PAINTER";
 
-    protected final VertexQueue VQueue;
     protected OrthographicCamera camera;
     protected ShapeRenderer debugRenderer = new ShapeRenderer();
     protected final int Width,Height;
@@ -37,10 +37,9 @@ public class Painter implements Screen {
     protected GameSuperviser Superviser;
     private final Player crazyFrog;
 
-    Painter(VertexQueue VQ,GameSuperviser superviser,Player crazyF) {
+    Painter(GameSuperviser superviser,Player crazyF) {
 
         Superviser = superviser;
-        VQueue = VQ;
         Width = Superviser.getWidth();
         Height = Superviser.getHeight();
         camera = superviser.getDisplayCamera();
@@ -95,7 +94,7 @@ public class Painter implements Screen {
         }
     }
 
-    public void setPaintingMode(GameSuperviser.GameState g) {
+    public void setPaintingMode(Model.GameState g) {
         PaintingMode = g;
     }
 
@@ -126,8 +125,8 @@ public class Painter implements Screen {
         debugRenderer.setColor(new Color(0.0f, 0.5f, 1f, 1));
         Rectangle r = BackgroundSprites[0].getBoundingRectangle();
 
-        for(int i = 0;i<VQueue.getSize();++i) {
-            Vertex vertex = VQueue.getVertex(i);
+        for(int i = 0;i<Model.VQueue.getSize();++i) {
+            Vertex vertex = Model.VQueue.getVertex(i);
 
             if(vertex.x > camera_top) break;//since vertex is not visible
 
@@ -141,9 +140,9 @@ public class Painter implements Screen {
         debugRenderer.end();
 
         batch.begin();
-        for(int i = 0;i<VQueue.getSize();++i) {
+        for(int i = 0;i<Model.VQueue.getSize();++i) {
 
-            Vertex vertex = VQueue.getVertex(i);
+            Vertex vertex = Model.VQueue.getVertex(i);
             if(vertex.x > camera_top ) break;
 
             if(vertex.getCurrentState() == Vertex.Status.Invisible) vertex.changeState(Vertex.Status.Visible);

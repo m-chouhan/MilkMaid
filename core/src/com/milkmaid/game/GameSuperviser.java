@@ -14,12 +14,10 @@ import com.badlogic.gdx.math.Vector3;
  */
 public class GameSuperviser implements Screen {
 
-    //only three for now
-    public enum GameState {NORMAL,STRONGER,SHARPER}
-    private GameState CurrentGameState = GameState.NORMAL;
+    private Model.GameState CurrentGameState = Model.GameState.NORMAL;
 
     private OrthographicCamera DisplayCamera;
-    private final int Width,Height,WorldHeight= 480;
+    private final int Width,Height;
     private int Score = 0;
 
     private Painter NormalRenderer,CurrentRenderer,StrongerRenderer;
@@ -34,29 +32,28 @@ public class GameSuperviser implements Screen {
 
         Width = width;
         Height = height;
-        VertexQueue VQ = new VertexQueue(25,WorldHeight);
-        Vector2 v = VQ.getVertex(0);
+        Vector2 v = Model.VQueue.getVertex(0);
 
         crazyFrog = new Player(new Vector3(v.x,v.y,0));
         DisplayCamera = new OrthographicCamera(Width,Height); //viewport dimensions
         DisplayCamera.position.set(DisplayCamera.viewportWidth / 2f,
-                WorldHeight / 2, 0);
+                Model.WorldHeight / 2, 0);
         DisplayCamera.rotate(180);
         DisplayCamera.update();
 
-        NormalWorld = new World(VQ,this,crazyFrog);
-        SharperWorld = new SuperSharperWorld(VQ,this,crazyFrog);
-        SuperStrongerWorld s = new SuperStrongerWorld(VQ,this,crazyFrog);
+        NormalWorld = new World(this,crazyFrog);
+        SharperWorld = new SuperSharperWorld(this,crazyFrog);
+        SuperStrongerWorld s = new SuperStrongerWorld(this,crazyFrog);
         StrongerWorld = s;
         CurrentWorld = NormalWorld;
 
-        NormalRenderer = new Painter(VQ,this,crazyFrog);
-        StrongerRenderer = new StrongerPainter(VQ,crazyFrog.position,
+        NormalRenderer = new Painter(this,crazyFrog);
+        StrongerRenderer = new StrongerPainter(crazyFrog.position,
                     s.getInitialPos(),this,crazyFrog);
         CurrentRenderer = NormalRenderer;
     }
 
-    public void SwitchState(GameState g) {
+    public void SwitchState(Model.GameState g) {
 
         CurrentGameState = g;
         Vertex last_touched = CurrentWorld.getLastTouched();
@@ -112,7 +109,7 @@ public class GameSuperviser implements Screen {
 
     public int getWidth() { return Width; }
     public int getHeight() { return Height; }
-    public int getWorldHeight() { return WorldHeight; }
+
     public OrthographicCamera getDisplayCamera() { return DisplayCamera; }
     public int getScore() { return Score; }
 

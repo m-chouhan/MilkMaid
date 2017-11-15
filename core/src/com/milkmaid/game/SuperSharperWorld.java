@@ -17,8 +17,8 @@ public class SuperSharperWorld extends World {
     private float counter = timeStep;
     private Vertex Top;
 
-    public SuperSharperWorld(VertexQueue vqueue,GameSuperviser superviser,Player p) {
-        super(vqueue,superviser,p);
+    public SuperSharperWorld(GameSuperviser superviser,Player p) {
+        super(superviser,p);
     }
 
     private void MoveTo(float xpos ) {
@@ -35,7 +35,7 @@ public class SuperSharperWorld extends World {
         if(counter == timeStep) {
 
             if(Stack.size() == 0) {
-                Superviser.SwitchState(GameSuperviser.GameState.NORMAL);
+                Superviser.SwitchState(Model.GameState.NORMAL);
                 return;
             }
 
@@ -61,26 +61,27 @@ public class SuperSharperWorld extends World {
         int camera_bottom = (int) (camera.position.x - camera.viewportWidth/2);
         if(VQueue.getVertex(0).x <camera_bottom)
         {
-            Vertex v = VQueue.Pop();
-            VQueue.Push(v);
+            VQueue.RecycleStartVertex();
             //Do this only limited times to ensure correctness
+            /*
             if(correction_counter > 0) {
                 v.Connect(Top);
                 correction_counter--;
             }
+            */
         }
 
         counter++;
     }
 
-    //Searches path from lastTouched Vertext to topmost vertex
+    //Searches path from Vertext v to topmost vertex
     public void searchPath(Vertex v) {
 
         correction_counter = 2;
         Top = VQueue.getVertex(VQueue.getSize() -1);
         LastTouched = v;
         for(Vertex e: v.getEdgeList()) {
-            if (Greedy_DFS(e, Top, Stack)) {
+            if (DFS(e, Top, Stack)) {
                 Gdx.app.log(TAG, "Reachable :)");
                 return;
             }
@@ -88,17 +89,24 @@ public class SuperSharperWorld extends World {
         Gdx.app.log(TAG, "Not Reachable :(");
     }
 
-    //TODO: Implement Greedy Part :P
-    private boolean Greedy_DFS(Vertex v, Vertex top, LinkedList<Vertex> stack) {
-        if(v == top) {
-            stack.addLast(v);
+    /**
+     *
+     * @param start : start vertex
+     * @param end : end vertex
+     * @param stack : list of vertices
+     * @return
+     */
+    private boolean DFS(Vertex start, Vertex end, LinkedList<Vertex> stack) {
+
+        if(start == end) {
+            stack.addLast(start);
             return true;
         }
-        if( stack.indexOf(v) != -1 || v.getCurrentState() == Vertex.Status.Touched ) return false;
+        if(stack.indexOf(start) != -1 || start.getCurrentState() == Vertex.Status.Touched ) return false;
 
-        stack.addLast(v);
-        for( Vertex e: v.getEdgeList()) {
-            if(Greedy_DFS(e,top,stack)) return true;
+        stack.addLast(start);
+        for( Vertex e: start.getEdgeList()) {
+            if(DFS(e,end,stack)) return true;
         }
 
         stack.removeLast();
