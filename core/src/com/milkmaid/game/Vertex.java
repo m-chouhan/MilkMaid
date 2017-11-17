@@ -24,38 +24,26 @@ public class Vertex extends Vector2 {
     private final int SIZE = 50; //DIMENSIONS of the vertex
 
     public Vertex() {
-        super();
-        x = 0;y = 0;
+        super(0,0);
     }
 
     public Vertex(int x,int y) {
-
-        super();
-        this.x = x;this.y = y;
+        super(x,y);
     }
 
 //    public static void Reset() { RESET = !RESET; } //optimized reset function for painting
 
 
-    public void changeState(Status s) {
+    public void changeState(Status nextState) {
 
-        //TODO: add state transitions
-        switch (s) {
-
-            case Alive:
-                break;
-            case Touched:
-                    break;
-            case Dead:
-                    for(Vertex v:EdgeList) {
-                        v.changeState(Status.Alive);
-                        v.Disconnect(this);
-                    }
-                    EdgeList.clear();
-                    break;
-            case Reachable:
+        if(nextState == Status.Dead) {
+            for (Vertex v : EdgeList) {
+                v.changeState(Status.Alive);
+                v.Disconnect(this);
+            }
+            EdgeList.clear();
         }
-        currentState = s;
+        currentState = nextState;
     }
 
     public ArrayList<Vertex> getEdgeList() { return EdgeList; }

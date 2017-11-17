@@ -97,7 +97,7 @@ public class VertexQueue {
         if(size < 4) {
             // Randomly select a position from 5 X 6 grid
             v.x = (getVertex(size - 1).x + (R.nextInt(5)+5)*40);
-            v.y = R.nextInt(6) * (80);
+            v.y = R.nextInt(6) * (80) + 20;
             v.Connect(getVertex(size-2));
             return true;
         }
@@ -110,21 +110,22 @@ public class VertexQueue {
         }
         while(v1.dst(v) < 200 || v2.dst(v) < 200 || v3.dst(v) < 200);
 
-        int a = size - 2,b = size - 3;
+        Vertex vertexA = getVertex(size - 2),vertexB = getVertex(size - 3);
+        v.Connect(vertexA);
 
-        v.Connect(getVertex(a));
-        if( a != b && !Overlap(b,v) ) v.Connect(getVertex(b));
+        Vector2 A = new Vector2(v).sub(vertexA), B = new Vector2(v).sub(vertexB);
+        float slopeThreshold = Math.abs(A.angle(B));
+        if( !Overlap(size-3,v)) v.Connect(vertexB);
 
-//        if(size>2) ConnectRandomly(size);
         return true;
     }
 
-    /*Checks if two line overlap or not  */
+    /*Checks if two lines overlap or not  */
     private boolean Overlap(int a,Vertex V2) {
 
         Vertex ver = getVertex(a);
         float slope = (V2.y - ver.y) /(V2.x-ver.x) ;
-        while(++a < size) {
+        while(++a < (size-1)) {
 
             Vertex v2 = getVertex(a);
             float y = v2.y - ver.y;
