@@ -15,7 +15,6 @@ public class Starter extends Game {
         Gdx.app.log(TAG, "wid--"+ Gdx.graphics.getWidth()+"Hei--"+Gdx.graphics.getHeight());
         int width = Gdx.graphics.getWidth(),height = Gdx.graphics.getHeight();
         Superviser = new GameSuperviser(width,height);
-
         setScreen(Superviser);
     }
 }

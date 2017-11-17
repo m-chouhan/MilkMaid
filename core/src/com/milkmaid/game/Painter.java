@@ -145,7 +145,6 @@ public class Painter implements Screen {
             Vertex vertex = Model.VQueue.getVertex(i);
             if(vertex.x > camera_top ) break;
 
-            if(vertex.getCurrentState() == Vertex.Status.Invisible) vertex.changeState(Vertex.Status.Visible);
             switch (vertex.getCurrentState()) {
 
                 case Reachable:

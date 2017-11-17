@@ -18,16 +18,6 @@ public class VertexQueue {
     private Random R = new Random();
     private final int max_size;
 
-    private void InflateVertices(int WorldHeight) {
-
-        int x = 100,y = WorldHeight/2;
-        Push(new Vertex(x, y));
-
-        for(int i = 1 ;i < max_size;++i) {
-            Push(new Vertex(0,0));
-        }
-    }
-
     /**
      * @param size = num of vertices you want in your queue
      * @param WorldHeight = 'width' of game
@@ -37,7 +27,14 @@ public class VertexQueue {
         bottom = 0;this.size = 0;
         max_size = size;
         Array = new Vertex[size];
-        InflateVertices(WorldHeight);
+
+        int x = 100,y = WorldHeight/2;
+        Vertex start = new Vertex(x,y);
+        Push(start);
+
+        for(int i = 1 ;i < max_size;++i) {
+            Push(new Vertex());
+        }
     }
 
     public int getSize() { return size; }
@@ -69,32 +66,53 @@ public class VertexQueue {
         return -1;
     }
 
+    private void ConnectRandomly(int size) {
+
+        Vertex v = getVertex(size-1);
+//
+//        int a = 0,b = 0;
+//        a = size - 1;b = size - 2;
+//        if (size < 3) {
+//            a = R.nextInt(size);
+//            b = R.nextInt(size);
+//            b = a;
+//        } else {
+//            a = size - 1;//(R.nextInt(3) + 1);
+//            b = size - 2;//(R.nextInt(3) + 1);
+//        }
+//
+//        v.Connect(getVertex(a));
+//        if( a != b && !Overlap(b,v) ) v.Connect(getVertex(b));
+
+        v.setVertexType(Vertex.Type.Normal);
+    }
+
     public boolean Push(Vertex v) {
 
         if(size >= max_size) return false;
 
-        if( size == 0 ) {
-            Array[bottom] = v;
-            size++;
+        Array[(bottom + size) % max_size] = v;
+        size++;
+        if(size == 1) return true;
+        if(size < 4) {
+            // Randomly select a position from 5 X 6 grid
+            v.x = (getVertex(size - 1).x + (R.nextInt(5)+4)*40);
+            v.y = R.nextInt(6) * (80);
+            v.Connect(getVertex(size-2));
             return true;
         }
 
-        v.x = (getVertex(size - 1).x + (R.nextInt(5)+2)*40);
-        v.y = R.nextInt(4) * (120);
-
         // set the location of next node at some minimum distance from other nodes
-        if(size > 3) {
-            Vector2 v1 = getVertex(size - 1) ,v2 = getVertex(size - 2) ,v3 = getVertex(size - 3);
-            do {
-                v.x = (v1.x + (R.nextInt(5)+1)*40);
-                v.y = R.nextInt(6) * (80);
-            }
-            while( v1.dst(v) < 200 || v2.dst(v) < 200 || v3.dst(v) < 200);
+        Vector2 v1 = getVertex(size - 2) ,v2 = getVertex(size - 3) ,v3 = getVertex(size - 4);
+        do {
+            v.x = (v1.x + (R.nextInt(5)+2)*40);
+            v.y = R.nextInt(6) * (80);
         }
+        while(v1.dst(v) < 200 || v2.dst(v) < 200 || v3.dst(v) < 200);
 
         int a = 0,b = 0;
-
-        if (size < 7) {
+        a = size - 2;b = size - 3;
+        if (size < 2) {
             a = R.nextInt(size);
             b = R.nextInt(size);
             b = a;
@@ -106,33 +124,15 @@ public class VertexQueue {
         v.Connect(getVertex(a));
         if( a != b && !Overlap(b,v) ) v.Connect(getVertex(b));
 
-        Array[(bottom + size) % max_size] = v;
-        size++;
-
-        v.changeState(Vertex.Status.Invisible);
-        v.setVertexType(Vertex.Type.Normal);
+//        if(size>2) ConnectRandomly(size);
         return true;
-        //TODO: Add case for superpower Taller :/
-//        switch ((int)(Math.random()*30) ) {
-//
-//            case 9:
-//            case 8:
-//                    v.setVertexType(Vertex.Type.Sharper);
-//                    break;
-//            case 7:
-//                    v.setVertexType(Vertex.Type.Stronger);
-//                    break;
-//            default:
-//                    v.setVertexType(Vertex.Type.Normal);
-//                    break;
-//        }
     }
 
     /*Checks if two line overlap or not  */
-    private boolean Overlap(int a,Vertex v) {
+    private boolean Overlap(int a,Vertex V2) {
 
         Vertex ver = getVertex(a);
-        float slope = (v.y - ver.y) /(v.x-ver.x) ;
+        float slope = (V2.y - ver.y) /(V2.x-ver.x) ;
         while(++a < size) {
 
             Vertex v2 = getVertex(a);
@@ -154,7 +154,6 @@ public class VertexQueue {
         if( size > 0) {
             Vertex v = Array[bottom];
             v.changeState(Vertex.Status.Dead);
-
             bottom = (bottom + 1) % max_size;
             size--;
             return v;

@@ -79,10 +79,8 @@ public class World extends MotherController {
         }
 
         int camera_bottom = (int) (camera.position.x - camera.viewportWidth/2);
-        if(VQueue.getVertex(0).x <camera_bottom) {
-            VQueue.Push(VQueue.Pop());
-        }
-
+        if(VQueue.getVertex(0).x < camera_bottom)
+            VQueue.RecycleStartVertex();
     }
 
     @Override

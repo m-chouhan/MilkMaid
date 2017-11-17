@@ -12,7 +12,7 @@ import java.util.Iterator;
  */
 public class Vertex extends Vector2 {
 
-    enum Status { Visible,Touched,Dead,Invisible,Reachable,UnReachable };
+    enum Status { Visible,Touched,Dead,Reachable,UnReachable };
     enum Type {Normal,Taller,Stronger,Sharper,Bonus};
 
     private static boolean RESET = false;
@@ -23,6 +23,11 @@ public class Vertex extends Vector2 {
     private Type VertexType = Type.Normal;
     private final int WEIGHT = 5; //weight of the vertex;
     private final int SIZE = 50; //DIMENSIONS of the vertex
+
+    public Vertex() {
+        super();
+        x = 0;y = 0;
+    }
 
     public Vertex(int x,int y) {
 
@@ -46,9 +51,6 @@ public class Vertex extends Vector2 {
                         v.Disconnect(this);
                     }
                     EdgeList.clear();
-                    break;
-
-            case Invisible:
                     break;
             case Visible:
                     break;

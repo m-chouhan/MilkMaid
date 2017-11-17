@@ -35,21 +35,16 @@ public class GameSuperviser implements Screen {
         Vector2 v = Model.VQueue.getVertex(0);
 
         crazyFrog = new Player(new Vector3(v.x,v.y,0));
-        DisplayCamera = new OrthographicCamera(Width,Height); //viewport dimensions
-        DisplayCamera.position.set(DisplayCamera.viewportWidth / 2f,
-                Model.WorldHeight / 2, 0);
-        DisplayCamera.rotate(180);
-        DisplayCamera.update();
-
+        DisplayCamera = Utility.setupCamera(width, height);
         NormalWorld = new World(this,crazyFrog);
         SharperWorld = new SuperSharperWorld(this,crazyFrog);
-        SuperStrongerWorld s = new SuperStrongerWorld(this,crazyFrog);
-        StrongerWorld = s;
-        CurrentWorld = NormalWorld;
+        StrongerWorld = new SuperStrongerWorld(this,crazyFrog);
 
         NormalRenderer = new Painter(this,crazyFrog);
         StrongerRenderer = new StrongerPainter(crazyFrog.position,
-                    s.getInitialPos(),this,crazyFrog);
+                    StrongerWorld.getInitialPos(),this,crazyFrog);
+
+        CurrentWorld = NormalWorld;
         CurrentRenderer = NormalRenderer;
     }
 
@@ -92,7 +87,7 @@ public class GameSuperviser implements Screen {
         InputProcessor = new InputHandler(NormalWorld);
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(InputProcessor);
-        multiplexer.addProcessor(StrongerWorld);
+        multiplexer.addProcessor(StrongerWorld); // called when previous processor returns true
         Gdx.input.setInputProcessor(multiplexer);
     }
 
