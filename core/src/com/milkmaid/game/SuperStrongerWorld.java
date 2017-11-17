@@ -126,7 +126,7 @@ public class SuperStrongerWorld extends MotherController implements InputProcess
                 int camera_bottom = (int) (camera.position.x - camera.viewportWidth/2);
 
                 if(VQueue.getVertex(0).x <camera_bottom)
-                    VQueue.Push(VQueue.Pop());
+                    VQueue.RecycleStartVertex();
 
                 /*Update Player */
                 player.velocity.x *= 0.99f;

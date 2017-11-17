@@ -40,7 +40,7 @@ public class SuperSharperWorld extends World {
             }
 
             for (Vertex vertex : LastTouched.getEdgeList())
-                vertex.changeState(Vertex.Status.UnReachable);
+                vertex.changeState(Vertex.Status.Alive);
 
             LastTouched.changeState(Vertex.Status.Dead);
 

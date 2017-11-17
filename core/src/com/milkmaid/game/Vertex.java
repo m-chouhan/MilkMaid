@@ -1,7 +1,6 @@
 package com.milkmaid.game;
 
 import com.badlogic.gdx.math.Vector2;
-import com.sun.org.apache.xml.internal.serializer.ElemDesc;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -12,14 +11,14 @@ import java.util.Iterator;
  */
 public class Vertex extends Vector2 {
 
-    enum Status { Visible,Touched,Dead,Reachable,UnReachable };
+    enum Status { Alive,Touched,Dead,Reachable};
     enum Type {Normal,Taller,Stronger,Sharper,Bonus};
 
-    private static boolean RESET = false;
+//    private static boolean RESET = false;
 
-    private Status currentState = Status.Visible;
+    private Status currentState = Status.Alive;
     private ArrayList<Vertex> EdgeList = new ArrayList<Vertex>();
-    private boolean explored = false;
+//    private boolean explored = false;
     private Type VertexType = Type.Normal;
     private final int WEIGHT = 5; //weight of the vertex;
     private final int SIZE = 50; //DIMENSIONS of the vertex
@@ -35,7 +34,7 @@ public class Vertex extends Vector2 {
         this.x = x;this.y = y;
     }
 
-    public static void Reset() { RESET = !RESET; } //optimized reset function for painting
+//    public static void Reset() { RESET = !RESET; } //optimized reset function for painting
 
 
     public void changeState(Status s) {
@@ -43,22 +42,18 @@ public class Vertex extends Vector2 {
         //TODO: add state transitions
         switch (s) {
 
+            case Alive:
+                break;
             case Touched:
                     break;
             case Dead:
                     for(Vertex v:EdgeList) {
-                        v.changeState(Status.Visible);
+                        v.changeState(Status.Alive);
                         v.Disconnect(this);
                     }
                     EdgeList.clear();
                     break;
-            case Visible:
-                    break;
-
             case Reachable:
-            case UnReachable:
-                    if( currentState == Status.Touched) return;
-                    break;
         }
         currentState = s;
     }

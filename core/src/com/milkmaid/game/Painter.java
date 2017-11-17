@@ -10,7 +10,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 
@@ -69,10 +68,12 @@ public class Painter implements Screen {
             s.setPosition(x, 250);
             Rectangle r = s.getBoundingRectangle();
             x += r.getWidth();
-//            Gdx.app.log(TAG, "RegionInfo"+ r.getX() +"|" + r.getY() +"|" +
-//                        r.getWidth() +"|" + r.getHeight());
-//            Gdx.app.log(TAG, "SpriteInfo"+ s.getX() +"|" + s.getY() +"|" +
-//                    s.getWidth() +"|" + s.getHeight());
+            /*
+            Gdx.app.log(TAG, "RegionInfo"+ r.getX() +"|" + r.getY() +"|" +
+                        r.getWidth() +"|" + r.getHeight());
+            Gdx.app.log(TAG, "SpriteInfo"+ s.getX() +"|" + s.getY() +"|" +
+                    s.getWidth() +"|" + s.getHeight());
+            */
         }
 
         batch = new SpriteBatch();
@@ -106,7 +107,7 @@ public class Painter implements Screen {
 
     private void NormalPaint() {
 
-        Vertex.Reset();//reset the Is explored boolean value
+//        Vertex.Reset(); //reset the Is explored boolean value
 
         int camera_top = (int) (camera.position.x + camera.viewportWidth/2); //for optimization
 
@@ -121,21 +122,17 @@ public class Painter implements Screen {
         for(Sprite s: BackgroundSprites) s.draw(batch); //render background
         batch.end();
 
+        //Lines
         debugRenderer.begin(ShapeRenderer.ShapeType.Line);
         debugRenderer.setColor(new Color(0.0f, 0.5f, 1f, 1));
-        Rectangle r = BackgroundSprites[0].getBoundingRectangle();
-
         for(int i = 0;i<Model.VQueue.getSize();++i) {
             Vertex vertex = Model.VQueue.getVertex(i);
 
             if(vertex.x > camera_top) break;//since vertex is not visible
 
             for(Vertex e:vertex.getEdgeList()) {
-
-                //if( !he.getDst().IsExplored() || he.getDst().getCurrentState() == Vertex.Status.Invisible)
                     debugRenderer.line(vertex,e);
             }
-            //vertex.MarkExplored();
         }
         debugRenderer.end();
 
@@ -152,8 +149,7 @@ public class Painter implements Screen {
                     BackgroundGlow.setPosition(vertex.x - Regions[1][0].getRegionWidth()/2,
                             vertex.y-Regions[1][0].getRegionHeight()/2);
                     BackgroundGlow.draw(batch);
-                case UnReachable:
-                case Visible:
+                case Alive:
                     batch.draw(Regions[1][1], vertex.x - Regions[1][1].getRegionWidth() / 2,
                             vertex.y-Regions[1][1].getRegionHeight()/2);
                     break;
@@ -182,8 +178,6 @@ public class Painter implements Screen {
         }
 
         batch.end();
-        // crazyFrog.render(batch);
-        /**/
         camera.rotate(-90);
         camera.update();
         camera_top = (int) (camera.position.y + camera.viewportWidth/2);

@@ -87,7 +87,7 @@ public class VertexQueue {
         v.setVertexType(Vertex.Type.Normal);
     }
 
-    public boolean Push(Vertex v) {
+    private boolean Push(Vertex v) {
 
         if(size >= max_size) return false;
 
@@ -96,7 +96,7 @@ public class VertexQueue {
         if(size == 1) return true;
         if(size < 4) {
             // Randomly select a position from 5 X 6 grid
-            v.x = (getVertex(size - 1).x + (R.nextInt(5)+4)*40);
+            v.x = (getVertex(size - 1).x + (R.nextInt(5)+5)*40);
             v.y = R.nextInt(6) * (80);
             v.Connect(getVertex(size-2));
             return true;
@@ -110,16 +110,7 @@ public class VertexQueue {
         }
         while(v1.dst(v) < 200 || v2.dst(v) < 200 || v3.dst(v) < 200);
 
-        int a = 0,b = 0;
-        a = size - 2;b = size - 3;
-        if (size < 2) {
-            a = R.nextInt(size);
-            b = R.nextInt(size);
-            b = a;
-        } else {
-            a = size - 1;//(R.nextInt(3) + 1);
-            b = size - 2;//(R.nextInt(3) + 1);
-        }
+        int a = size - 2,b = size - 3;
 
         v.Connect(getVertex(a));
         if( a != b && !Overlap(b,v) ) v.Connect(getVertex(b));
@@ -146,10 +137,11 @@ public class VertexQueue {
 
     public void RecycleStartVertex() {
         Vertex v = Pop();
+        v.changeState(Vertex.Status.Alive);
         Push(v);
     }
 
-    public Vertex Pop() {
+    private Vertex Pop() {
 
         if( size > 0) {
             Vertex v = Array[bottom];
