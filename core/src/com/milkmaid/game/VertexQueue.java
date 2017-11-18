@@ -113,27 +113,10 @@ public class VertexQueue {
         Vertex vertexA = getVertex(size - 2),vertexB = getVertex(size - 3);
         v.Connect(vertexA);
 
-        Vector2 A = new Vector2(v).sub(vertexA), B = new Vector2(v).sub(vertexB);
+        Vector2 A = new Vector2(v).sub(vertexA), B = new Vector2(vertexB).sub(vertexA);
         float slopeThreshold = Math.abs(A.angle(B));
-        if( !Overlap(size-3,v)) v.Connect(vertexB);
-
+        if( slopeThreshold < 120) v.Connect(vertexB);
         return true;
-    }
-
-    /*Checks if two lines overlap or not  */
-    private boolean Overlap(int a,Vertex V2) {
-
-        Vertex ver = getVertex(a);
-        float slope = (V2.y - ver.y) /(V2.x-ver.x) ;
-        while(++a < (size-1)) {
-
-            Vertex v2 = getVertex(a);
-            float y = v2.y - ver.y;
-            float x = slope*(v2.x-ver.x);
-            float res = y - x;
-            if( Math.abs(res) < 60 ) return true;
-        }
-        return false;
     }
 
     public void RecycleStartVertex() {
