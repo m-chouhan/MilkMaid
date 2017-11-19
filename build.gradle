@@ -56,6 +56,11 @@ project(":core") {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         compile "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
+        compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
+        compile 'com.squareup.retrofit2:converter-gson:2.1.0'
+        compile 'com.squareup.retrofit2:retrofit:2.1.0'
+        compile 'io.reactivex:rxandroid:1.2.0'
+        compile 'io.reactivex:rxjava:1.1.8'
     }
 }
 
