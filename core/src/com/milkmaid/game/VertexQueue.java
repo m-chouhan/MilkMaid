@@ -3,7 +3,7 @@ package com.milkmaid.game;
 /**
  * Created by maximus_prime on 3/10/15.
  * This is a custom Queue Class for recycling Vertices efficiently
- * Also handles the pushing and popping of elements and graph generation logic
+ * Also handles the positioning and edges of vertices in queue
  */
 
 import com.badlogic.gdx.math.Vector2;
@@ -39,7 +39,10 @@ public class VertexQueue {
         throw new ArrayIndexOutOfBoundsException();
     }
 
-    //search for max value < x and return the index for iterating over it
+    /**
+     * @param x : x position
+     * @return max(index).x < x
+     */
     public int SearchUpperBound(int x) {
 
         for(int i = 1; i< size;++i) {
@@ -55,12 +58,12 @@ public class VertexQueue {
         if(index == 0) return;
 
         Vertex top_vertex = getVertex(index),second_top = getVertex(index-1);
-        top_vertex.Connect(second_top);
+        Vertex.Connect(top_vertex,second_top);
         if(index > 1) {
             Vertex third_top = getVertex(index-2);
             Vector2 A = new Vector2(top_vertex).sub(second_top), B = new Vector2(third_top).sub(second_top);
             float slopeThreshold = Math.abs(A.angle(B));
-            if (slopeThreshold < 120) top_vertex.Connect(third_top);
+            if (slopeThreshold < 145 && Utility.probabilityOf(0.6)) Vertex.Connect(top_vertex,third_top);
         }
     }
 
@@ -75,8 +78,8 @@ public class VertexQueue {
         Vertex previous_top = getVertex(index-1);
         // set the location of next node at some minimum distance from previous 2 other nodes
         do {
-            top_vertex.x = previous_top.x + (R.nextInt(5)+2)*40;
-            top_vertex.y = R.nextInt(6) * (80);
+            top_vertex.x = previous_top.x + (R.nextInt(4)+2)*40;
+            top_vertex.y = R.nextInt(7) * (80);
         }
         while(previous_top.dst(top_vertex) < 200 || (index >= 2 && getVertex(index-2).dst(top_vertex) < 200));
     }
@@ -108,8 +111,5 @@ public class VertexQueue {
         }
         throw new EmptyStackException();
     }
-
-    public int getLargestIndex() { return (bottom+size-1)% capacity; }
-    public int getSmallestIndex(){ return bottom; }
 
 }
