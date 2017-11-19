@@ -42,20 +42,10 @@ public class VertexQueue {
     //search for max value < x and return the index for iterating over it
     public int SearchUpperBound(int x) {
 
-        int step_size = (int)Math.ceil(size/2f);
-        int i = step_size;
-
-        while (i >= 0 && i < size && step_size > 0) {
-
-            Vertex v = getVertex(i);
-            step_size = (int) Math.ceil(step_size /2f);
-            if (v.x < x) {
-                Vertex v2 = getVertex(i + 1);
-                if (v2.x >= x) return i;
-                else i += step_size;
-
-            }
-            else i -= step_size;
+        for(int i = 1; i< size;++i) {
+            Vertex prev = getVertex(i-1);
+            Vertex current = getVertex(i);
+            if( prev.x < x && current.x >= x ) return i-1;
         }
         return -1;
     }
