@@ -15,6 +15,6 @@ public class Model {
         public boolean compare(int a1, int a2);
     }
 
-//    MyComparator myComparator = (a1, a2) -> {return a1 > a2;};
+    MyComparator myComparator = (a1, a2) -> {return a1 > a2;};
 //    boolean result = myComparator.compare(2, 5);
 }
