@@ -7,6 +7,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
+import io.reactivex.Flowable;
+
 /**
  * Created by maximus_prime on 13/10/15.
  * Maintains and supervises game states transition
@@ -84,11 +86,17 @@ public class GameSuperviser implements Screen {
     @Override
     public void show() {
 
-        InputProcessor = new InputHandler(NormalWorld);
-        InputMultiplexer multiplexer = new InputMultiplexer();
-        multiplexer.addProcessor(InputProcessor);
-        multiplexer.addProcessor(StrongerWorld); // called when previous processor returns true
-        Gdx.input.setInputProcessor(multiplexer);
+//        InputProcessor = new InputHandler(NormalWorld);
+//        InputMultiplexer multiplexer = new InputMultiplexer();
+//        multiplexer.addProcessor(InputProcessor);
+//        multiplexer.addProcessor(StrongerWorld); // called only when previous processor returns false
+//        Gdx.input.setInputProcessor(multiplexer);
+
+        //TODO: above logic will go inside inputobservable.subscribe
+        Flowable<InputObservable.InputEvent> inputFlowable = InputObservable.create(getDisplayCamera());
+        inputFlowable.subscribe(inputEvent -> {
+            Gdx.app.log("GAME SUPERVISER",""+inputEvent.type);
+        });
     }
 
     /*This is my Game loop
