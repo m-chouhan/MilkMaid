@@ -61,8 +61,6 @@ public class World extends MotherController {
                 Game_Started = false;
                 Superviser.SwitchState(Model.GameState.STRONGER);
                 break;
-            case Normal:
-            case Bonus:
         }
 
         Superviser.updateScore(newLastTouched.getWeight());
@@ -81,7 +79,7 @@ public class World extends MotherController {
 
         int camera_bottom = (int) (camera.position.x - camera.viewportWidth/2);
         if(VQueue.getVertex(0).x < camera_bottom)
-            VQueue.RecycleStartVertex();
+            VQueue.RecycleBottomVertex();
     }
 
     @Override

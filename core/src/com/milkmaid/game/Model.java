@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 public class Model {
 
     static final int WorldHeight= 480;
-    static VertexQueue VQueue = new VertexQueue(25,WorldHeight);
+    static VertexQueue VQueue = new VertexQueue(25);
     public enum GameState {NORMAL,STRONGER,SHARPER}
 
 }

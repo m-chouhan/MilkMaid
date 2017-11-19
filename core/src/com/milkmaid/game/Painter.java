@@ -172,8 +172,6 @@ public class Painter implements Screen {
                     batch.draw(Regions[0][0], vertex.x - Regions[0][0].getRegionWidth()/2,
                             vertex.y-Regions[0][0].getRegionHeight()/2);
                     break;
-                case Taller:break;
-
             }
         }
 

@@ -16,23 +16,18 @@ public class VertexQueue {
     private Vertex Array[];
     private int bottom,size;
     private Random R = new Random();
-    private final int max_size;
+    private final int capacity;
 
     /**
-     * @param size = num of vertices you want in your queue
-     * @param WorldHeight = 'width' of game
+     * @param capacity = num of vertices you want in your queue
      */
-    public VertexQueue(int size,int WorldHeight) {
+    public VertexQueue(int capacity) {
 
-        bottom = 0;this.size = 0;
-        max_size = size;
-        Array = new Vertex[size];
-
-        int x = 100,y = WorldHeight/2;
-        Vertex start = new Vertex(x,y);
-        Push(start);
-
-        for(int i = 1 ;i < max_size;++i) {
+        bottom = 0;
+        size = 0;
+        this.capacity = capacity;
+        Array = new Vertex[capacity];
+        for(int i = 0; i < capacity; ++i) {
             Push(new Vertex());
         }
     }
@@ -40,7 +35,7 @@ public class VertexQueue {
     public int getSize() { return size; }
 
     public Vertex getVertex(int i) {
-        if( i < size && i>= 0) return Array[ (bottom + i) % max_size ];
+        if( i < size && i>= 0) return Array[ (bottom + i) % capacity];
         throw new ArrayIndexOutOfBoundsException();
     }
 
@@ -54,7 +49,6 @@ public class VertexQueue {
 
             Vertex v = getVertex(i);
             step_size = (int) Math.ceil(step_size /2f);
-
             if (v.x < x) {
                 Vertex v2 = getVertex(i + 1);
                 if (v2.x >= x) return i;
@@ -66,60 +60,48 @@ public class VertexQueue {
         return -1;
     }
 
-    private void ConnectRandomly(int size) {
+    private void Connect(int index) {
 
-        Vertex v = getVertex(size-1);
-//
-//        int a = 0,b = 0;
-//        a = size - 1;b = size - 2;
-//        if (size < 3) {
-//            a = R.nextInt(size);
-//            b = R.nextInt(size);
-//            b = a;
-//        } else {
-//            a = size - 1;//(R.nextInt(3) + 1);
-//            b = size - 2;//(R.nextInt(3) + 1);
-//        }
-//
-//        v.Connect(getVertex(a));
-//        if( a != b && !Overlap(b,v) ) v.Connect(getVertex(b));
+        if(index == 0) return;
 
-        v.setVertexType(Vertex.Type.Normal);
+        Vertex top_vertex = getVertex(index),second_top = getVertex(index-1);
+        top_vertex.Connect(second_top);
+        if(index > 1) {
+            Vertex third_top = getVertex(index-2);
+            Vector2 A = new Vector2(top_vertex).sub(second_top), B = new Vector2(third_top).sub(second_top);
+            float slopeThreshold = Math.abs(A.angle(B));
+            if (slopeThreshold < 120) top_vertex.Connect(third_top);
+        }
     }
 
-    private boolean Push(Vertex v) {
+    private void setRandomPositonOf(int index) {
 
-        if(size >= max_size) return false;
-
-        Array[(bottom + size) % max_size] = v;
-        size++;
-        if(size == 1) return true;
-        if(size < 4) {
-            // Randomly select a position from 5 X 6 grid
-            v.x = (getVertex(size - 1).x + (R.nextInt(5)+5)*40);
-            v.y = R.nextInt(6) * (80) + 20;
-            v.Connect(getVertex(size-2));
-            return true;
+        Vertex top_vertex = getVertex(index);
+        if(index == 0) {
+            top_vertex.set(100,Model.WorldHeight/2);
+            return;
         }
 
-        // set the location of next node at some minimum distance from other nodes
-        Vector2 v1 = getVertex(size - 2) ,v2 = getVertex(size - 3) ,v3 = getVertex(size - 4);
+        Vertex previous_top = getVertex(index-1);
+        // set the location of next node at some minimum distance from previous 2 other nodes
         do {
-            v.x = (v1.x + (R.nextInt(5)+2)*40);
-            v.y = R.nextInt(6) * (80);
+            top_vertex.x = previous_top.x + (R.nextInt(5)+2)*40;
+            top_vertex.y = R.nextInt(6) * (80);
         }
-        while(v1.dst(v) < 200 || v2.dst(v) < 200 || v3.dst(v) < 200);
+        while(previous_top.dst(top_vertex) < 200 || (index >= 2 && getVertex(index-2).dst(top_vertex) < 200));
+    }
 
-        Vertex vertexA = getVertex(size - 2),vertexB = getVertex(size - 3);
-        v.Connect(vertexA);
+    private boolean Push(Vertex top_vertex) {
 
-        Vector2 A = new Vector2(v).sub(vertexA), B = new Vector2(vertexB).sub(vertexA);
-        float slopeThreshold = Math.abs(A.angle(B));
-        if( slopeThreshold < 120) v.Connect(vertexB);
+        if(size >= capacity) return false;
+
+        Array[(bottom + size++) % capacity] = top_vertex;
+        setRandomPositonOf(size-1);
+        Connect(size-1);
         return true;
     }
 
-    public void RecycleStartVertex() {
+    public void RecycleBottomVertex() {
         Vertex v = Pop();
         v.changeState(Vertex.Status.Alive);
         Push(v);
@@ -130,14 +112,14 @@ public class VertexQueue {
         if( size > 0) {
             Vertex v = Array[bottom];
             v.changeState(Vertex.Status.Dead);
-            bottom = (bottom + 1) % max_size;
+            bottom = (bottom + 1) % capacity;
             size--;
             return v;
         }
         throw new EmptyStackException();
     }
 
-    public int getLargestIndex() { return (bottom+size-1)%max_size; }
+    public int getLargestIndex() { return (bottom+size-1)% capacity; }
     public int getSmallestIndex(){ return bottom; }
 
 }

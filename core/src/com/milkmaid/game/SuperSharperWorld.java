@@ -61,7 +61,7 @@ public class SuperSharperWorld extends World {
         int camera_bottom = (int) (camera.position.x - camera.viewportWidth/2);
         if(VQueue.getVertex(0).x <camera_bottom)
         {
-            VQueue.RecycleStartVertex();
+            VQueue.RecycleBottomVertex();
             //Do this only limited times to ensure correctness
             /*
             if(correction_counter > 0) {

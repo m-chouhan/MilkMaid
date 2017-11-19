@@ -6,22 +6,18 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- * Created by maximus_prime on 3/10/15.
- * MODEL CLASS
+ * Represents a node in the Graph
  */
 public class Vertex extends Vector2 {
 
-    enum Status { Alive,Touched,Dead,Reachable};
-    enum Type {Normal,Taller,Stronger,Sharper,Bonus};
-
-//    private static boolean RESET = false;
-
-    private Status currentState = Status.Alive;
-    private ArrayList<Vertex> EdgeList = new ArrayList<Vertex>();
-//    private boolean explored = false;
-    private Type VertexType = Type.Normal;
+    enum Status {Alive,Touched,Dead,Reachable};
+    enum Type {Normal,Stronger,Sharper};
+    private final ArrayList<Vertex> EdgeList = new ArrayList<Vertex>();
     private final int WEIGHT = 5; //weight of the vertex;
     private final int SIZE = 50; //DIMENSIONS of the vertex
+
+    private Status currentState = Status.Alive;
+    private Type VertexType = Type.Normal;
 
     public Vertex() {
         super(0,0);
@@ -30,9 +26,6 @@ public class Vertex extends Vector2 {
     public Vertex(int x,int y) {
         super(x,y);
     }
-
-//    public static void Reset() { RESET = !RESET; } //optimized reset function for painting
-
 
     public void changeState(Status nextState) {
 
@@ -57,8 +50,8 @@ public class Vertex extends Vector2 {
 
         if(EdgeList.size() == 0 ) currentState = Status.Dead;
     }
-    public void Connect(Vertex v) {
 
+    public void Connect(Vertex v) {
         //ignores duplicate edges
         for(Vertex vertex: EdgeList) {
             if(vertex == v) return;
