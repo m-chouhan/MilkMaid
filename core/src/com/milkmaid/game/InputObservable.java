@@ -31,6 +31,16 @@ public class InputObservable extends InputAdapter {
             this.y = y;
             this.type = type;
         }
+
+        //required for distinct until changed to work
+        @Override
+        public boolean equals(Object o) {
+            if( o instanceof InputEvent) {
+                InputEvent event = (InputEvent)o;
+                return this.x == event.x && this.y == event.y;
+            }
+            return super.equals(o);
+        }
     }
 
     @Override

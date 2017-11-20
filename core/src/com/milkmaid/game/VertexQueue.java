@@ -84,6 +84,15 @@ public class VertexQueue {
         while(previous_top.dst(top_vertex) < 200 || (index >= 2 && getVertex(index-2).dst(top_vertex) < 200));
     }
 
+    /**TODO:
+     * Randomly assigns a type to each vertex
+     * @param index
+     */
+    private void setVertexType(int index) {
+        if(index == 0)
+            getVertex(0).changeState(Vertex.Status.Reachable);
+    }
+
     private boolean Push(Vertex top_vertex) {
 
         if(size >= capacity) return false;
@@ -91,6 +100,7 @@ public class VertexQueue {
         Array[(bottom + size++) % capacity] = top_vertex;
         setRandomPositonOf(size-1);
         Connect(size-1);
+        setVertexType(size-1);
         return true;
     }
 

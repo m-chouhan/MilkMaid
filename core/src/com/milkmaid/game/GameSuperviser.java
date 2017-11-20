@@ -27,7 +27,6 @@ public class GameSuperviser implements Screen {
     private MotherController CurrentWorld;
     private SuperStrongerWorld StrongerWorld;
     private SuperSharperWorld SharperWorld;
-    private InputHandler InputProcessor;
     private Player crazyFrog;
 
     public GameSuperviser(int width,int height) {
@@ -55,7 +54,7 @@ public class GameSuperviser implements Screen {
         CurrentGameState = g;
         Vertex last_touched = CurrentWorld.getLastTouched();
 
-        switch (CurrentGameState) {
+/*        switch (CurrentGameState) {
             case NORMAL:
                 CurrentWorld = NormalWorld;
                 //Start game from the last touched vertex
@@ -79,6 +78,7 @@ public class GameSuperviser implements Screen {
                 break;
 
         }
+*/
 
         CurrentWorld.startGame(last_touched);
         CurrentRenderer.setPaintingMode(g);
@@ -86,17 +86,15 @@ public class GameSuperviser implements Screen {
     @Override
     public void show() {
 
-//        InputProcessor = new InputHandler(NormalWorld);
-//        InputMultiplexer multiplexer = new InputMultiplexer();
-//        multiplexer.addProcessor(InputProcessor);
-//        multiplexer.addProcessor(StrongerWorld); // called only when previous processor returns false
-//        Gdx.input.setInputProcessor(multiplexer);
-
-        //TODO: above logic will go inside inputobservable.subscribe
         Flowable<InputObservable.InputEvent> inputFlowable = InputObservable.create(getDisplayCamera());
-        inputFlowable.subscribe(inputEvent -> {
-            Gdx.app.log("GAME SUPERVISER",""+inputEvent.type);
-        });
+        inputFlowable
+                .distinctUntilChanged()
+                .flatMap(GameEvent::createVertexEvent)
+                .filter(vertex -> vertex.getCurrentState() == Vertex.Status.Reachable)
+                .subscribe(vertex -> {
+                    CurrentWorld.VertexTouched(vertex);
+                    Gdx.app.log("GAME SUPERVISER","VertexTouched "+vertex.x + "," + vertex.y);
+                });
     }
 
     /*This is my Game loop

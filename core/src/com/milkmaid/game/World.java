@@ -19,40 +19,39 @@ public class World extends MotherController {
     @Override
     public void VertexTouched(Vertex vertex) {
 
-        if(LastTouched == vertex ) return;//eliminate repeated events
+        //if(LastTouched == vertex ) return;//eliminate repeated events
 
-        //TODO: Check for vertext type and set their control
-        if( LastTouched == null) {
-          if(vertex == VQueue.getVertex(0)) {
-              LastTouched = vertex;
-              LastTouched.changeState(Vertex.Status.Touched);
-              for(Vertex ver:LastTouched.getEdgeList())
-                  ver.changeState(Vertex.Status.Reachable);
-              startGame(LastTouched);
-              setSpeed(1.0f);
-          }
-          return;
-        }
+        if(vertex.getCurrentState() == Vertex.Status.Reachable)
+            updateLastTouched(vertex);
 
-        for( Vertex nextVertex:LastTouched.getEdgeList() ) {
+//        //TODO: Check for vertext type and set their control
+//        if( LastTouched == null) {
+//          if(vertex == VQueue.getVertex(0)) {
+//              LastTouched = vertex;
+//              LastTouched.changeState(Vertex.Status.Touched);
+//              for(Vertex ver:LastTouched.getEdgeList())
+//                  ver.changeState(Vertex.Status.Reachable);
+//              startGame(LastTouched);
+//              setSpeed(1.0f);
+//          }
+//          return;
+//        }
 
-            if(nextVertex == vertex) {
-                updateLastTouched(vertex);
-                return;
-            }
-        }
     }
 
     private void updateLastTouched(Vertex newLastTouched) {
 
-        for (Vertex h : LastTouched.getEdgeList())
-            h.changeState(Vertex.Status.Alive);
-        LastTouched.changeState(Vertex.Status.Dead);
+        if(LastTouched != null) {
+            for (Vertex h : LastTouched.getEdgeList())
+                h.changeState(Vertex.Status.Alive);
+            LastTouched.changeState(Vertex.Status.Dead);
+        }
+        else startGame(newLastTouched);
+
         newLastTouched.changeState(Vertex.Status.Touched);
         for (Vertex vertex : newLastTouched.getEdgeList())
             vertex.changeState(Vertex.Status.Reachable);
-
-        switch (LastTouched.getVertexType()){
+        /*switch (LastTouched.getVertexType()){
             case Sharper:
                 Game_Started = false;
                 Superviser.SwitchState(Model.GameState.SHARPER);
@@ -61,8 +60,7 @@ public class World extends MotherController {
                 Game_Started = false;
                 Superviser.SwitchState(Model.GameState.STRONGER);
                 break;
-        }
-
+        }*/
         Superviser.updateScore(newLastTouched.getWeight());
         LastTouched = newLastTouched;
     }
